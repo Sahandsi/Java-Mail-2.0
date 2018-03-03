@@ -10,7 +10,7 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Client">
     <children>
-        <TextField fx:id="Input" alignment="CENTER" layoutX="147.0" layoutY="106.0" prefHeight="35.0" prefWidth="286.0" promptText="Username" />
+        <TextField fx:id="Input" alignment="CENTER" layoutX="147.0" layoutY="106.0" onAction="#loginButton" prefHeight="35.0" prefWidth="286.0" promptText="Username" />
         <Button fx:id="login" layoutX="255.0" layoutY="244.0" mnemonicParsing="false" onAction="#loginButton" prefHeight="27.0" prefWidth="69.0" text="Login" />
         <Text fontSmoothingType="LCD" layoutX="136.0" layoutY="82.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome to Mail" textAlignment="CENTER" wrappingWidth="307.9462890625">
             <font>

@@ -44,7 +44,7 @@
                         <Font name="Comic Sans MS" size="13.0" />
                      </font></TextField>
                   <Region prefHeight="31.0" prefWidth="289.0" />
-                  <Button mnemonicParsing="false" onAction="#sendMail" prefHeight="27.0" prefWidth="85.0" text="Send">
+                  <Button mnemonicParsing="false" prefHeight="27.0" prefWidth="85.0" text="Send">
                      <font>
                         <Font name="Comic Sans MS" size="14.0" />
                      </font>

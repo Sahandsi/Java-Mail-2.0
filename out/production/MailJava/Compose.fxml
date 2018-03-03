@@ -9,7 +9,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="447.0" prefWidth="688.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="447.0" prefWidth="688.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Client">
    <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
@@ -39,7 +39,7 @@
                         <Font name="Comic Sans MS" size="21.0" />
                      </font>
                   </Text>
-                  <TextField alignment="CENTER" prefHeight="31.0" prefWidth="245.0">
+                  <TextField fx:id="InputTo" alignment="CENTER" prefHeight="31.0" prefWidth="245.0">
                      <font>
                         <Font name="Comic Sans MS" size="13.0" />
                      </font></TextField>
@@ -58,7 +58,7 @@
       </VBox>
    </top>
    <center>
-      <TextArea prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+      <TextArea fx:id="content" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
    </center>
    <bottom>
       <HBox BorderPane.alignment="CENTER">

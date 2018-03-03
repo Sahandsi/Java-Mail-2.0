@@ -1,28 +1,77 @@
-
 import javafx.fxml.FXML;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.net.ServerSocket;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.net.*;
 import java.io.*;
 import java.util.Scanner;
 
-public class Server implements Serializable // used to send object from     client to server
+public class Server implements Serializable // used to send object from client to server
 {
     // list of users of type string
     private static ArrayList<String> users = new ArrayList<String>();
     private static ArrayList<Email> mails = new ArrayList<Email>();
 
+
+    private static Connection getConnection()
+    {
+        try{
+            Connection link = null;
+            Statement statement = null;
+            ResultSet results = null;
+            String driver = "com.mysql.jdbc.Driver";
+            String url = "jdbc:mysql://localhost:8889/Java";
+            String username = "root";
+            String password = "root";
+
+            Class.forName(driver);
+
+            Connection conn = DriverManager.getConnection(url, username, password);
+            System.out.println("Connected");
+          //  Connection conn = getConnection();
+            //connection();
+            statement = conn.createStatement();
+            String sql = "SELECT Name from Users";
+
+
+            System.out.println(sql);
+            ResultSet rs = statement.executeQuery(sql);
+           // return conn;
+
+            while (rs.next()) {
+
+
+                String names = rs.getString("Name");
+                System.out.println("names : " + names);
+users.add(names);
+
+            }
+
+
+        } catch(Exception e){
+            System.out.println(e);
+        }
+        return null;
+    }
+
     public static void main(String[] args) throws IOException
     {
         // set up 3 users
-        users.add("U1");
-        users.add("U2");
-        users.add("U3");
+//        users.add("U1");
+//        users.add("U2");
+//        users.add("U3");
+
+          getConnection();
+
 
         Socket client; // client
+
         ServerSocket serverSocket = null; // server
         final int PORT = 1234;
 
@@ -42,8 +91,7 @@ public class Server implements Serializable // used to send object from     clie
         System.out.println("\n Server running");
 
         do {
-            client = serverSocket.accept(); // accept the client to the   server
-            System.out.println("Client accepted");
+            client = serverSocket.accept(); // accept the client to the server
             // create a function that will validate the user
             String validUser = validateUser(client);
             clientHandler = new ClientHandler(validUser, client);
@@ -54,18 +102,21 @@ public class Server implements Serializable // used to send object from     clie
 
     }
 
+
     private static String validateUser(Socket client)
     {
         Scanner inputFromClient = null;
         PrintWriter outputToClient = null;
         boolean validUser = false;
 
+
+
         try
         {
             // allows the server to retrieve the input from the client
             inputFromClient = new Scanner(client.getInputStream());
             // allow server to send things to the client
-            outputToClient = new PrintWriter(client.getOutputStream(),  true);
+            outputToClient = new PrintWriter(client.getOutputStream(), true);
 
         }
         catch(IOException io)
@@ -73,16 +124,18 @@ public class Server implements Serializable // used to send object from     clie
             System.out.println("Problem initialising variables");
         }
 
+
         // get the input from the client
-        System.out.printf("BEFORE THE VALUE");
         String userToValidate = inputFromClient.nextLine();
+
 
 
         while  (validUser == false)
         {
             for(String username : users)
             {
-                // check the user to validate matches the user from the  client
+
+                // check the user to validate matches the user from the client
                 if (username.equals(userToValidate))
                 {
                     // tell the client that user is valid
@@ -95,7 +148,7 @@ public class Server implements Serializable // used to send object from     clie
             {
                 // user is invalid so wait for a new user to pass from the client to the server
                 outputToClient.println("false");
-                userToValidate = inputFromClient.nextLine();
+                userToValidate = inputFromClient.next();
             }
             else
             {
@@ -115,39 +168,54 @@ public class Server implements Serializable // used to send object from     clie
         return mails;
     }
 
+
 }
+
 // each client will have their unique username
-class ClientHandler extends Thread implements Serializable {
+class ClientHandler extends Thread implements Serializable
+{
     private Socket client;
     // retrieve requests from the client
     private Scanner input;
     // send requests to the client
     private PrintWriter output;
+
     private String username;
 
-    public ClientHandler(String username, Socket client) {
+    public ClientHandler(String username, Socket client)
+    {
         this.username = username;
         this.client = client;
-        try {
+        System.out.println("BEFORE TRY");
+        try
+        {
             input = new Scanner(client.getInputStream());
             output = new PrintWriter(client.getOutputStream(), true);
-        } catch (IOException io) {
+        }
+
+        catch(IOException io)
+        {
             System.out.println("Client Handler not set up properly");
         }
 
     }
 
-    public void run() {
+    public void run()
+    {
         // recieve request from the server
         String request = input.nextLine();
 
         System.out.println(request);
         // check the request
-        while (!request.equals("close")) {
+        while(!request.equals("close"))
+        {
             // do whatever the user wants to do
-            if (request.equals("get_inbox")) {
+            if (request.equals("get_inbox"))
+            {
                 System.out.println("INSIDE INBOX REQUEST");
-            } else if (request.equals("send_email")) {
+            }
+            else if (request.equals("send_email"))
+            {
                 System.out.println("INSIDE SEND EMAIL REQUEST");
             }
 
@@ -155,13 +223,15 @@ class ClientHandler extends Thread implements Serializable {
         }
 
         // end the client connection
-        try {
+        try
+        {
             System.out.println("Ending connection");
             client.close();
-        } catch (IOException io) {
+        }
+        catch(IOException io)
+        {
             System.out.println("Coulnd't close connection");
         }
-
 
     }
 
