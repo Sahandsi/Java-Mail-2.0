@@ -34,7 +34,7 @@ public class Server implements Serializable // used to send object from client t
 
             Connection conn = DriverManager.getConnection(url, username, password);
             System.out.println("Connected");
-          //  Connection conn = getConnection();
+            //Connection conn = getConnection();
             //connection();
             statement = conn.createStatement();
             String sql = "SELECT Name from Users";
@@ -49,7 +49,7 @@ public class Server implements Serializable // used to send object from client t
 
                 String names = rs.getString("Name");
                 System.out.println("names : " + names);
-users.add(names);
+                users.add(names);
 
             }
 
@@ -62,10 +62,6 @@ users.add(names);
 
     public static void main(String[] args) throws IOException
     {
-        // set up 3 users
-//        users.add("U1");
-//        users.add("U2");
-//        users.add("U3");
 
           getConnection();
 
@@ -182,9 +178,12 @@ class ClientHandler extends Thread implements Serializable
 
     private String username;
 
+    private String text;
+
     public ClientHandler(String username, Socket client)
     {
         this.username = username;
+        System.out.println(username);
         this.client = client;
         System.out.println("BEFORE TRY");
         try

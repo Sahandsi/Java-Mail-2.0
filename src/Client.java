@@ -195,6 +195,20 @@ public class Client extends Application // for GUI
 
     }
 
+    @FXML
+    private TextArea content;
+
+    @FXML
+    public void sendMail() throws Exception
+    {
+        String t = content.getText();
+        System.out.println(t);
+        loader();
+        outputToServer.println(t);
+       // String serverRequest = inputFromServer.nextLine();
+
+    }
+
     public void quitApp() {
         outputToServer.println("close");
     }
