@@ -17,6 +17,9 @@ public class Server implements Serializable // used to send object from client t
     // list of users of type string
     private static ArrayList<String> users = new ArrayList<String>();
     private static ArrayList<Email> mails = new ArrayList<Email>();
+private ObjectOutputStream output;
+private ObjectInputStream input;
+
 
 
     private static Connection getConnection()
@@ -96,7 +99,45 @@ public class Server implements Serializable // used to send object from client t
         } while (true);
 
 
+       // output = new ObjectOutputStream(client.getOutputStream());
     }
+
+
+//    private void Streams(Socket client) throws  Exception{
+//        Scanner inputFromClient = null;
+//        PrintWriter outputToClient = null;
+//        // allows the server to retrieve the input from the client
+//        inputFromClient = new Scanner(client.getInputStream());
+//        // allow server to send things to the client
+//        outputToClient = new PrintWriter(client.getOutputStream(), true);
+//        System.out.println("Strems active");
+//
+//    }
+
+
+//
+//    private static String sendMail(Socket client)
+//    {
+//        Scanner inputFromClient = null;
+//        PrintWriter outputToClient = null;
+//        try
+//        {
+//            // allows the server to retrieve the input from the client
+//            inputFromClient = new Scanner(client.getInputStream());
+//            // allow server to send things to the client
+//            outputToClient = new PrintWriter(client.getOutputStream(), true);
+//
+//
+//        }
+//        catch(IOException io)
+//        {
+//            System.out.println("Problem initialising variables");
+//        }
+//        String userMail = inputFromClient.nextLine();
+//
+//        return userMail;
+//
+//    }
 
 
     private static String validateUser(Socket client)
@@ -161,6 +202,7 @@ public class Server implements Serializable // used to send object from client t
     // get the mail from the server so it can be accessed in the clienthandler
     private static ArrayList<Email> getMail()
     {
+
         return mails;
     }
 
@@ -178,7 +220,7 @@ class ClientHandler extends Thread implements Serializable
 
     private String username;
 
-    private String text;
+    //private String text;
 
     public ClientHandler(String username, Socket client)
     {
@@ -190,6 +232,7 @@ class ClientHandler extends Thread implements Serializable
         {
             input = new Scanner(client.getInputStream());
             output = new PrintWriter(client.getOutputStream(), true);
+           // System.out.println(input);
         }
 
         catch(IOException io)
@@ -235,4 +278,7 @@ class ClientHandler extends Thread implements Serializable
     }
 
 
-}
+    }
+
+
+

@@ -109,6 +109,7 @@ public class Client extends Application // for GUI
 
             loader();
             outputToServer.println(t);
+            outputToServer.flush();
             String serverRequest = inputFromServer.nextLine();
 
             if (serverRequest.equals("true")) {
@@ -152,11 +153,11 @@ public class Client extends Application // for GUI
         stage.show();
     }
 
-    public void getInbox() {
-        System.out.println("BEFORE SENDING INBOX REQUEST");
-        outputToServer.println("get_inbox");
-        System.out.println("AFTER SENDING INBOX REQUEST");
-    }
+//    public void getInbox() {
+//        System.out.println("BEFORE SENDING INBOX REQUEST");
+//        outputToServer.println("get_inbox");
+//        System.out.println("AFTER SENDING INBOX REQUEST");
+//    }
 
     @FXML
     private void composeButtonHandler(ActionEvent event) throws Exception
@@ -172,41 +173,66 @@ public class Client extends Application // for GUI
         stage.show();
     }
 
-    public void getEmail() throws Exception {
-        //outputToServer.println("get_email"); // send request
-        ObjectInputStream recieveObjFromServer = null; // recieve obj from serber
-
-
-        try
-        {
-             recieveObjFromServer = new ObjectInputStream(socket.getInputStream());
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-
-        ArrayList<Email> inbox;
-
-
-        inbox = (ArrayList<Email>) recieveObjFromServer.readObject();
-
-        // now display this in a table view or
-
-    }
+//    public void getEmail() throws Exception {
+//        //outputToServer.println("get_email"); // send request
+//        ObjectInputStream recieveObjFromServer = null; // recieve obj from serber
+//
+//
+//        try
+//        {
+//             recieveObjFromServer = new ObjectInputStream(socket.getInputStream());
+//        }
+//        catch (IOException e)
+//        {
+//            e.printStackTrace();
+//        }
+//
+//        ArrayList<Email> inbox;
+//
+//
+//        inbox = (ArrayList<Email>) recieveObjFromServer.readObject();
+//
+//        // now display this in a table view or
+//
+//    }
 
     @FXML
     private TextArea content;
 
-    @FXML
-    public void sendMail() throws Exception
-    {
-        String t = content.getText();
-        System.out.println(t);
-        loader();
-        outputToServer.println(t);
-       // String serverRequest = inputFromServer.nextLine();
+//    @FXML
+//    public void sendMail() throws Exception {
+//        loader();
+//        String t = content.getText();
+//        System.out.println("send_email");
+//        outputToServer.write(t);
+//        outputToServer.flush();
+//
+//        //System.out.println(t);
+//
+//        //loader();
+//        //outputToServer.println(t);
+//        // String serverRequest = inputFromServer.nextLine();
+//
+//        // send a request to a server indicating the user wants to send a valid message
+//
+//
+//        }
+    //}
 
+    public void getInbox() {
+        try {
+            loader();
+            System.out.println("BEFORE SENDING INBOX REQUEST");
+            outputToServer.println("get_inbox");
+            System.out.println("AFTER SENDING INBOX REQUEST");
+        }
+        catch(Exception e){
+            System.out.println(e);
+        }
+    }
+
+    public void getEmail() {
+        outputToServer.println("send_email");
     }
 
     public void quitApp() {
