@@ -1,52 +1,17 @@
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
-import java.io.IOException;
 import java.io.*;
 import java.net.*;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Scanner;
-import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.geometry.VPos;
-import javafx.scene.Scene;
+import java.util.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.TilePane;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
 
 
 public class Client extends Application // for GUI
@@ -67,10 +32,11 @@ public class Client extends Application // for GUI
         }
 
 
-        // indefinate
+        // run the app with server running
         do {
             launch(args);
         } while (true);
+
 
     }
 
@@ -141,13 +107,36 @@ public class Client extends Application // for GUI
 
         // Use a border pane as the root for scene
         BorderPane border = new BorderPane();
-        HBox hbox = addHBox();
+        HBox hbox = addHBoxMain();
 
         border.setTop(hbox);
-        border.setLeft(addVBox());
-        border.setLeft(addFlowPane());
+        border.setLeft(addVBoxMain());
+        border.setLeft(addFlowPaneMain());
 
         scene = new Scene(border, 500, 500);
+        stage = new Stage();
+        stage.setScene(scene);
+        stage.show();
+
+    }
+
+    private void sendMail() {
+
+        Stage stage;
+        Scene scene;
+
+        // Use a border pane as the root for scene
+        BorderPane border = new BorderPane();
+        HBox hbox = addHBoxCompose();
+
+        border.setTop(hbox);
+        HBox hboxText = addHBoxText();
+        border.setCenter(hboxText);
+
+        // border.setLeft(addVBoxMain());
+       // border.setLeft(addFlowPaneMain());
+
+        scene = new Scene(border, 400, 400);
         stage = new Stage();
         stage.setScene(scene);
         stage.show();
@@ -174,7 +163,7 @@ public class Client extends Application // for GUI
      * Creates an HBox with two buttons for the top region
      */
 
-    private HBox addHBox() {
+    private HBox addHBoxMain() {
 
         HBox hbox = new HBox();
         hbox.setPadding(new Insets(15, 12, 15, 12));
@@ -183,6 +172,7 @@ public class Client extends Application // for GUI
 
         Button buttonCompose = new Button("Compose");
         buttonCompose.setPrefSize(100, 20);
+        buttonCompose.setOnAction(e -> sendMail());
 
         Button buttonDelete = new Button("Delete");
         buttonDelete.setPrefSize(100, 20);
@@ -192,10 +182,50 @@ public class Client extends Application // for GUI
         return hbox;
     }
 
+
+    private HBox addHBoxCompose() {
+
+        HBox hbox = new HBox();
+        hbox.setPadding(new Insets(15, 12, 15, 12));
+        hbox.setSpacing(10);   // Gap between nodes
+        hbox.setStyle("-fx-background-color: #336699;");
+
+        Button buttonCompose = new Button("Send");
+        buttonCompose.setPrefSize(100, 20);
+
+//        Button buttonDelete = new Button("Delete");
+//        buttonDelete.setPrefSize(100, 20);
+
+        TextField userTextField = new TextField();
+
+
+        hbox.getChildren().addAll(userTextField,buttonCompose);
+
+        return hbox;
+    }
+
+    private HBox addHBoxText() {
+
+        HBox hbox = new HBox();
+        hbox.setPadding(new Insets(15, 12, 15, 12));
+        hbox.setSpacing(100);   // Gap between nodes
+
+        TextArea textArea = new TextArea(); //making a TexrArea object
+        double height = 400; //making a variable called height with a value 400
+        double width = 500;  //making a variable called height with a value 300
+        HBox.setHgrow(textArea, Priority.ALWAYS);
+        textArea.setWrapText(true);
+        textArea.setPrefHeight(height);  //sets height of the TextArea to 400 pixels
+        textArea.setPrefWidth(width);    //sets width of the TextArea to 300 pixels
+
+        hbox.getChildren().addAll(textArea);
+
+        return hbox;
+    }
     /*
      * Creates a VBox with a list of links for the left region
      */
-    private VBox addVBox() {
+    private VBox addVBoxMain() {
 
         VBox vbox = new VBox();
         vbox.setPadding(new Insets(10)); // Set all sides to 10
@@ -211,7 +241,7 @@ public class Client extends Application // for GUI
 
      //Creates a horizontal flow pane with eight icons in four rows
 
-    private FlowPane addFlowPane() {
+    private FlowPane addFlowPaneMain() {
 
         FlowPane flow = new FlowPane();
         flow.setPadding(new Insets(5, 0, 5, 0));
@@ -222,6 +252,9 @@ public class Client extends Application // for GUI
 
         return flow;
     }
+
+
+
 
 }
 
