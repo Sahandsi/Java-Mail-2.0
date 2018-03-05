@@ -50,14 +50,14 @@ public class Client extends Application // for GUI
         outputToServer = new PrintWriter(socket.getOutputStream(), true);
 
         Label message;
-        stage.setTitle("JavaFX Welcome");
+        stage.setTitle("Welcome");
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
 
-        Scene scene = new Scene(grid, 300, 275);
+        Scene scene = new Scene(grid, 500, 400);
         stage.setScene(scene);
 
         Text scenetitle = new Text("Welcome");
@@ -113,7 +113,7 @@ public class Client extends Application // for GUI
         border.setLeft(addVBoxMain());
         border.setLeft(addFlowPaneMain());
 
-        scene = new Scene(border, 500, 500);
+        scene = new Scene(border, 800, 500);
         stage = new Stage();
         stage.setScene(scene);
         stage.show();
@@ -133,10 +133,8 @@ public class Client extends Application // for GUI
         HBox hboxText = addHBoxText();
         border.setCenter(hboxText);
 
-        // border.setLeft(addVBoxMain());
-       // border.setLeft(addFlowPaneMain());
 
-        scene = new Scene(border, 400, 400);
+        scene = new Scene(border, 700, 400);
         stage = new Stage();
         stage.setScene(scene);
         stage.show();
@@ -144,6 +142,7 @@ public class Client extends Application // for GUI
     }
 
     public void getInbox() {
+
         System.out.println("BEFORE SENDING INBOX REQUEST");
         outputToServer.println("get_inbox");
         System.out.println("AFTER SENDING INBOX REQUEST");
@@ -157,11 +156,6 @@ public class Client extends Application // for GUI
         outputToServer.println("close");
     }
 
-
-
-    /*
-     * Creates an HBox with two buttons for the top region
-     */
 
     private HBox addHBoxMain() {
 
@@ -177,7 +171,11 @@ public class Client extends Application // for GUI
         Button buttonDelete = new Button("Delete");
         buttonDelete.setPrefSize(100, 20);
 
-        hbox.getChildren().addAll(buttonCompose, buttonDelete);
+
+        Button buttonRefresh = new Button("Refresh");
+        buttonDelete.setPrefSize(100, 20);
+
+        hbox.getChildren().addAll(buttonCompose, buttonDelete,buttonRefresh);
 
         return hbox;
     }
@@ -193,13 +191,11 @@ public class Client extends Application // for GUI
         Button buttonCompose = new Button("Send");
         buttonCompose.setPrefSize(100, 20);
 
-//        Button buttonDelete = new Button("Delete");
-//        buttonDelete.setPrefSize(100, 20);
+        TextField mailTo = new TextField();
 
-        TextField userTextField = new TextField();
+        hbox.getChildren().addAll(mailTo,buttonCompose);
 
-
-        hbox.getChildren().addAll(userTextField,buttonCompose);
+        buttonCompose.setOnAction(e -> getInbox());
 
         return hbox;
     }
@@ -252,9 +248,6 @@ public class Client extends Application // for GUI
 
         return flow;
     }
-
-
-
 
 }
 
