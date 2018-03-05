@@ -136,53 +136,16 @@ public class Client extends Application // for GUI
 
     private void LoadClient() {
 
-
-        // Scene scene;
-        VBox vbox;
         Stage stage;
         Scene scene;
-//
-//        Button inbox = new Button("Inbox");
-//        Button email = new Button("Email");
-//        Button quit = new Button("Quit");
-//
-//        inbox.setOnAction(e -> getInbox());
-//        email.setOnAction(e -> getEmail());
-//        quit.setOnAction(e -> quitApp());
-//
-//        // add buttons to layout
-//        vbox = new VBox();
-//        vbox.getChildren().add(inbox);
-//        vbox.getChildren().add(email);
-//        vbox.getChildren().add(quit);
 
-
-// Use a border pane as the root for scene
+        // Use a border pane as the root for scene
         BorderPane border = new BorderPane();
         HBox hbox = addHBox();
+
         border.setTop(hbox);
         border.setLeft(addVBox());
-
-// Add a stack to the HBox in the top region
-        //addStackPane(hbox);
-
-// To see only the grid in the center, uncomment the following statement
-// comment out the setCenter() call farther down
-//        border.setCenter(addGridPane());
-
-// Choose either a TilePane or FlowPane for right region and comment out the
-// one you aren't using
         border.setLeft(addFlowPane());
-//        border.setRight(addTilePane());
-
-// To see only the grid in the center, comment out the following statement
-// If both setCenter() calls are executed, the anchor pane from the second
-// call replaces the grid from the first call
-       // border.setCenter(addAnchorPane(addGridPane()));
-
-        // Scene scene = new Scene(border);
-        // stage.setScene(scene);
-        // stage.setTitle("Layout Sample");
 
         scene = new Scene(border, 500, 500);
         stage = new Stage();
@@ -246,41 +209,6 @@ public class Client extends Application // for GUI
         return vbox;
     }
 
-    /*
-     * Uses a stack pane to create a help icon and adds it to the right side of an HBox
-     *
-     * @param hb HBox to add the stack to
-     */
-//    private void addStackPane(HBox hb) {
-//
-//        StackPane stack = new StackPane();
-//        Rectangle helpIcon = new Rectangle(30.0, 25.0);
-//        helpIcon.setFill(new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE,
-//                new Stop[]{
-//                        new Stop(0, Color.web("#4977A3")),
-//                        new Stop(0.5, Color.web("#B0C6DA")),
-//                        new Stop(1, Color.web("#9CB6CF")),}));
-//        helpIcon.setStroke(Color.web("#D0E6FA"));
-//        helpIcon.setArcHeight(3.5);
-//        helpIcon.setArcWidth(3.5);
-//
-//        Text helpText = new Text("?");
-//        helpText.setFont(Font.font("Verdana", FontWeight.BOLD, 18));
-//        helpText.setFill(Color.WHITE);
-//        helpText.setStroke(Color.web("#7080A0"));
-//
-//        stack.getChildren().addAll(helpIcon, helpText);
-//        stack.setAlignment(Pos.CENTER_RIGHT);
-//        // Add offset to right for question mark to compensate for RIGHT
-//        // alignment of all nodes
-//        StackPane.setMargin(helpText, new Insets(0, 10, 0, 0));
-//
-//        hb.getChildren().add(stack);
-//        HBox.setHgrow(stack, Priority.ALWAYS);
-//
-//    }
-
-
      //Creates a horizontal flow pane with eight icons in four rows
 
     private FlowPane addFlowPane() {
@@ -294,12 +222,6 @@ public class Client extends Application // for GUI
 
         return flow;
     }
-
-    /*
-     * Creates an anchor pane using the provided grid and an HBox with buttons
-     *
-     * @param grid Grid to anchor to the top of the anchor pane
-     */
 
 }
 
