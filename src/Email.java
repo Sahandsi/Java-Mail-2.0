@@ -1,5 +1,5 @@
-public class Email // storing all mail
-{
+public class Email {
+
     // provide encapsulation
     private String from, to, subject, message;
 
@@ -31,6 +31,7 @@ public class Email // storing all mail
     {
         return message;
     }
+
 
 
 }

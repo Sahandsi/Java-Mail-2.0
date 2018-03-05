@@ -1,24 +1,21 @@
-import javafx.fxml.FXML;
+
 import java.io.IOException;
-import java.io.Serializable;
-import java.lang.reflect.Array;
-import java.net.ServerSocket;
+        import java.io.PrintWriter;
+        import java.io.Serializable;
+        import java.net.ServerSocket;
+        import java.net.Socket;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.net.*;
-import java.io.*;
-import java.util.Scanner;
+        import java.util.Scanner;
 
 public class Server implements Serializable // used to send object from client to server
 {
     // list of users of type string
     private static ArrayList<String> users = new ArrayList<String>();
-    private static ArrayList<Email> mails = new ArrayList<Email>();
-private ObjectOutputStream output;
-private ObjectInputStream input;
+   // private static ArrayList<Email> mails = new ArrayList<Email>();
 
 
 
@@ -45,7 +42,7 @@ private ObjectInputStream input;
 
             System.out.println(sql);
             ResultSet rs = statement.executeQuery(sql);
-           // return conn;
+            // return conn;
 
             while (rs.next()) {
 
@@ -63,31 +60,36 @@ private ObjectInputStream input;
         return null;
     }
 
+
+
     public static void main(String[] args) throws IOException
     {
+        // set up 3 users
+//        users.add("U1");
+//        users.add("U2");
+//        users.add("U3");
 
-          getConnection();
-
+        getConnection();
 
         Socket client; // client
 
         ServerSocket serverSocket = null; // server
-        final int PORT = 1234;
+        final int PORT = 6666;
 
         ClientHandler clientHandler;
 
         // set up the server socket
         try
         {
-            serverSocket = new ServerSocket(1234);
+            serverSocket = new ServerSocket(PORT);
         }
         catch (IOException ioEx)
         {
-            System.out.println("Can't set up port");
+            System.out.println("Unable to setup port.!");
             System.exit(1);
         }
 
-        System.out.println("\n Server running");
+        System.out.println("\n Server available.!");
 
         do {
             client = serverSocket.accept(); // accept the client to the server
@@ -99,54 +101,14 @@ private ObjectInputStream input;
         } while (true);
 
 
-       // output = new ObjectOutputStream(client.getOutputStream());
+
     }
-
-
-//    private void Streams(Socket client) throws  Exception{
-//        Scanner inputFromClient = null;
-//        PrintWriter outputToClient = null;
-//        // allows the server to retrieve the input from the client
-//        inputFromClient = new Scanner(client.getInputStream());
-//        // allow server to send things to the client
-//        outputToClient = new PrintWriter(client.getOutputStream(), true);
-//        System.out.println("Strems active");
-//
-//    }
-
-
-//
-//    private static String sendMail(Socket client)
-//    {
-//        Scanner inputFromClient = null;
-//        PrintWriter outputToClient = null;
-//        try
-//        {
-//            // allows the server to retrieve the input from the client
-//            inputFromClient = new Scanner(client.getInputStream());
-//            // allow server to send things to the client
-//            outputToClient = new PrintWriter(client.getOutputStream(), true);
-//
-//
-//        }
-//        catch(IOException io)
-//        {
-//            System.out.println("Problem initialising variables");
-//        }
-//        String userMail = inputFromClient.nextLine();
-//
-//        return userMail;
-//
-//    }
-
 
     private static String validateUser(Socket client)
     {
         Scanner inputFromClient = null;
         PrintWriter outputToClient = null;
         boolean validUser = false;
-
-
 
         try
         {
@@ -165,13 +127,10 @@ private ObjectInputStream input;
         // get the input from the client
         String userToValidate = inputFromClient.nextLine();
 
-
-
         while  (validUser == false)
         {
             for(String username : users)
             {
-
                 // check the user to validate matches the user from the client
                 if (username.equals(userToValidate))
                 {
@@ -179,13 +138,17 @@ private ObjectInputStream input;
                     validUser = true;
                     break;
                 }
+                else
+                {
+                    validUser = false;
+                }
             }
 
             if(validUser == false)
             {
                 // user is invalid so wait for a new user to pass from the client to the server
                 outputToClient.println("false");
-                userToValidate = inputFromClient.next();
+                userToValidate = inputFromClient.nextLine();
             }
             else
             {
@@ -198,13 +161,11 @@ private ObjectInputStream input;
 
     }
 
-
     // get the mail from the server so it can be accessed in the clienthandler
-    private static ArrayList<Email> getMail()
-    {
-
-        return mails;
-    }
+  //  private static ArrayList<Email> getMail()
+//    {
+//        return mails;
+//    }
 
 
 }
@@ -220,19 +181,15 @@ class ClientHandler extends Thread implements Serializable
 
     private String username;
 
-    //private String text;
-
     public ClientHandler(String username, Socket client)
     {
         this.username = username;
-        System.out.println(username);
         this.client = client;
         System.out.println("BEFORE TRY");
         try
         {
             input = new Scanner(client.getInputStream());
             output = new PrintWriter(client.getOutputStream(), true);
-           // System.out.println(input);
         }
 
         catch(IOException io)
@@ -259,6 +216,7 @@ class ClientHandler extends Thread implements Serializable
             else if (request.equals("send_email"))
             {
                 System.out.println("INSIDE SEND EMAIL REQUEST");
+
             }
 
             request = input.nextLine(); // get new request from server
@@ -278,7 +236,4 @@ class ClientHandler extends Thread implements Serializable
     }
 
 
-    }
-
-
-
+}
