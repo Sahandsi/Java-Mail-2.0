@@ -1,14 +1,15 @@
-public class Email {
+import java.io.Serializable;
+
+public class Email implements Serializable {
 
     // provide encapsulation
-    private String from, to, subject, message;
+    private String from, to, message;
 
     // constructor
-    public Email(String from, String to, String subject, String message)
+    public Email(String from, String to, String message)
     {
         this.from = from;
         this.to = to;
-        this.subject = subject;
         this.message = message;
     }
 
@@ -22,10 +23,6 @@ public class Email {
         return to;
     }
 
-    public String getSubject()
-    {
-        return subject;
-    }
 
     public String getMessage()
     {

@@ -1,6 +1,7 @@
 
 import java.io.IOException;
-        import java.io.PrintWriter;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
         import java.io.Serializable;
         import java.net.ServerSocket;
         import java.net.Socket;
@@ -15,6 +16,7 @@ public class Server implements Serializable // used to send object from client t
 {
     // list of users of type string
     private static ArrayList<String> users = new ArrayList<String>();
+    private static ArrayList<Email> lstEmails = new ArrayList<Email>();
    // private static ArrayList<Email> mails = new ArrayList<Email>();
 
 
@@ -103,6 +105,18 @@ public class Server implements Serializable // used to send object from client t
 
 
     }
+
+    public static ArrayList<String> RetrieveUsers()
+    {
+        return users;
+    }
+
+    public static ArrayList<Email> RetrieveEmails()
+    {
+        return lstEmails;
+    }
+
+
 
     private static String validateUser(Socket client)
     {
@@ -212,11 +226,44 @@ class ClientHandler extends Thread implements Serializable
             if (request.equals("get_inbox"))
             {
                 System.out.println("INSIDE INBOX REQUEST");
+
+                ArrayList<Email> lstInbox = new ArrayList<Email>();
+                for (Email inbox : Server.RetrieveEmails())
+                {
+                    if (inbox.getTo().equals(username))
+                    {
+                        lstInbox.add(inbox);
+                    }
+                }
+                //lstInbox.remove(index here)
+                ObjectOutputStream os = null;
+                try
+                {
+                    os =
+                            new ObjectOutputStream(client.getOutputStream());
+                    os.writeObject(lstInbox);
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+
             }
             else if (request.equals("send_email"))
             {
                 System.out.println("INSIDE SEND EMAIL REQUEST");
+                String to = input.nextLine();
+                String message = input.nextLine();
+                Email email = new Email(username, to, message);
 
+                // add the email
+                Server.RetrieveEmails().add(email);
+                for (Email inbox : Server.RetrieveEmails())
+                {
+                    System.out.println("From:"  + inbox.getFrom());
+                    System.out.println("To:"  + inbox.getTo());
+                    System.out.println("Message:"  + inbox.getMessage());
+                }
             }
 
             request = input.nextLine(); // get new request from server
