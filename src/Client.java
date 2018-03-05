@@ -1,6 +1,7 @@
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -15,6 +16,8 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import javafx.scene.control.Button;
+
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 
 // FOR GETTING OBJECT THAT YOU CLICKED, INBOXTABLE.GETSELECTEDMODEL().GETSELECTITEM();
 // FOR DELETE https://www.youtube.com/watch?v=SnAcSCcz0Sw
@@ -174,7 +177,12 @@ public class Client extends Application // for GUI
 
         Button buttonDelete = new Button("Delete");
         buttonDelete.setOnAction(e -> { Email selectedItem = inboxTable.getSelectionModel().getSelectedItem();
+            int index = inboxTable.getSelectionModel().selectedIndexProperty().get();
             inboxTable.getItems().remove(selectedItem);
+            //outputToServer.println(selectedItem);
+            outputToServer.println("delete_mail");
+            outputToServer.println(index);
+            //deleteMail();
         });
         buttonDelete.setPrefSize(100, 20);
 
@@ -326,6 +334,12 @@ public class Client extends Application // for GUI
 
     }
 
+
+    public void deleteMail(){
+        outputToServer.println("delete_mail");
+
+    }
+
     public void getInbox() {
 
         System.out.println("BEFORE SENDING INBOX REQUEST");
@@ -349,6 +363,7 @@ public class Client extends Application // for GUI
         }
 
     }
+
 
     public void quitApp() {
         outputToServer.println("close");

@@ -268,13 +268,15 @@ class ClientHandler extends Thread implements Serializable
                     System.out.println("Message:"  + inbox.getMessage());
                 }
             }
-//            else if (request.equals("delete_mail"))
-//            {
-//                String i = input.nextLine();
-//                int indexToRemove = Integer.parseInt(i);
-//
-//                Server.RetrieveEmails().remove(indexToRemove);
-//            }
+            else if (request.equals("delete_mail"))
+            {
+                System.out.println("hahay");
+                String i = input.nextLine();
+                int indexToRemove = Integer.parseInt(i);
+                System.out.println(indexToRemove);
+
+                Server.RetrieveEmails().remove(indexToRemove);
+            }
 
             request = input.nextLine(); // get new request from server
         }
