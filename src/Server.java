@@ -235,7 +235,7 @@ class ClientHandler extends Thread implements Serializable
                         lstInbox.add(inbox);
                     }
                 }
-                //lstInbox.remove(index here)
+               // lstInbox.remove(index here)
                 ObjectOutputStream os = null;
                 try
                 {
@@ -258,6 +258,9 @@ class ClientHandler extends Thread implements Serializable
 
                 // add the email
                 Server.RetrieveEmails().add(email);
+
+
+
                 for (Email inbox : Server.RetrieveEmails())
                 {
                     System.out.println("From:"  + inbox.getFrom());
@@ -265,6 +268,13 @@ class ClientHandler extends Thread implements Serializable
                     System.out.println("Message:"  + inbox.getMessage());
                 }
             }
+//            else if (request.equals("delete_mail"))
+//            {
+//                String i = input.nextLine();
+//                int indexToRemove = Integer.parseInt(i);
+//
+//                Server.RetrieveEmails().remove(indexToRemove);
+//            }
 
             request = input.nextLine(); // get new request from server
         }

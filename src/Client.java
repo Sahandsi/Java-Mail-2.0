@@ -16,6 +16,8 @@ import java.net.*;
 import java.util.*;
 import javafx.scene.control.Button;
 
+// FOR GETTING OBJECT THAT YOU CLICKED, INBOXTABLE.GETSELECTEDMODEL().GETSELECTITEM();
+// FOR DELETE https://www.youtube.com/watch?v=SnAcSCcz0Sw
 
 public class Client extends Application // for GUI
 {
@@ -171,6 +173,9 @@ public class Client extends Application // for GUI
 
 
         Button buttonDelete = new Button("Delete");
+        buttonDelete.setOnAction(e -> { Email selectedItem = inboxTable.getSelectionModel().getSelectedItem();
+            inboxTable.getItems().remove(selectedItem);
+        });
         buttonDelete.setPrefSize(100, 20);
 
 
