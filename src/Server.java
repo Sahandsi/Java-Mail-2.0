@@ -5,10 +5,7 @@ import java.io.PrintWriter;
         import java.io.Serializable;
         import java.net.ServerSocket;
         import java.net.Socket;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
         import java.util.Scanner;
 
@@ -248,7 +245,27 @@ class ClientHandler extends Thread implements Serializable
                     e.printStackTrace();
                 }
 
+
             }
+            else if (request.equals("register_user"))
+            {
+
+                String t = input.nextLine();
+
+                try{
+                        System.out.println("REGISTER REQUEST");
+                    Connection con = null;
+                    PreparedStatement posted = con.prepareStatement("INSERT INTO Users (Name) VALUES ('"+t+"')");
+
+                    posted.executeUpdate();
+                }catch (Exception e){
+                    System.out.println(e);
+                }
+
+                finally {
+                    System.out.println("Insert complete");
+                }
+        }
             else if (request.equals("send_email"))
             {
                 System.out.println("INSIDE SEND EMAIL REQUEST");

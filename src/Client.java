@@ -14,6 +14,9 @@ import javafx.stage.Stage;
 import javafx.scene.control.*;
 import java.io.*;
 import java.net.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.util.*;
 import javafx.scene.control.Button;
 
@@ -74,22 +77,80 @@ public class Client extends Application // for GUI
 
         Label userName = new Label("User Name:");
         grid.add(userName, 0, 1);
+        ///this is for the register
+        Label regName = new Label("whats your name?");
+        grid.add(regName, 2, 1);
+        ///this is for the register
 
         TextField userTextField = new TextField();
         grid.add(userTextField, 1, 1);
 
+//this is the register
+        TextField regTextField = new TextField();
+        grid.add(regTextField, 3, 1);
+//this is the register
         Button btn = new Button("Sign in");
+        //this is the register
+        Button regbtn = new Button("Register");
+//this is the register
         HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(btn);
+        //this is for reguster
+        hbBtn.getChildren().add(regbtn);
+//this is the reguster
         grid.add(hbBtn, 1, 4);
         final Text actiontarget = new Text();
         message = new Label();
         btn.setOnAction(e -> validateUsername(userTextField.getText(), message));
-
+      //  this is the register
+        regbtn.setOnAction(e -> registerUser(regTextField.getText(), message));
+        //this is the register
         grid.add(actiontarget, 1, 6);
         stage.show();
     }
+
+
+
+    private static Connection getConnection()
+    {
+        try{
+            String driver = "com.mysql.jdbc.Driver";
+            String url = "jdbc:mysql://localhost:8889/Java";
+            String username = "root";
+            String password = "root";
+
+            Class.forName(driver);
+
+            Connection conn = DriverManager.getConnection(url, username, password);
+            System.out.println("Connected");
+            return conn;
+
+        } catch(Exception e){
+            System.out.println(e);
+        }
+        return null;
+    }
+
+
+    private void registerUser(String username, Label message) {
+        String t = username;
+
+        try{
+            Connection con = getConnection();
+            PreparedStatement posted = con.prepareStatement("INSERT INTO Users (Name) VALUES ('"+t+"')");
+
+            posted.executeUpdate();
+        }catch (Exception e){
+            System.out.println(e);
+        }
+
+        finally {
+            System.out.println("Insert complete");
+        }
+
+    }
+
 
     private void validateUsername(String username, Label message) {
         if (username.isEmpty()) {
