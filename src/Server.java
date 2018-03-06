@@ -303,6 +303,7 @@ class ClientHandler extends Thread implements Serializable
         {
             System.out.println("Ending connection");
             client.close();
+            System.exit(0);
         }
         catch(IOException io)
         {

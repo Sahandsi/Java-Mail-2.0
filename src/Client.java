@@ -20,10 +20,6 @@ import java.sql.PreparedStatement;
 import java.util.*;
 import javafx.scene.control.Button;
 
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
-
-// FOR GETTING OBJECT THAT YOU CLICKED, INBOXTABLE.GETSELECTEDMODEL().GETSELECTITEM();
-// FOR DELETE https://www.youtube.com/watch?v=SnAcSCcz0Sw
 
 public class Client extends Application // for GUI
 {
@@ -248,11 +244,19 @@ public class Client extends Application // for GUI
         buttonDelete.setPrefSize(100, 20);
 
 
+
+        Button buttonExit = new Button("Close App");
+        buttonExit.setOnAction(e ->  quitApp());
+        buttonDelete.setPrefSize(100, 20);
+
+
+
+
         Button buttonRefresh = new Button("Refresh");
         buttonRefresh.setOnAction(e -> refreshMail(inboxTable));
         buttonDelete.setPrefSize(100, 20);
 
-        hbox.getChildren().addAll(buttonCompose, buttonDelete,buttonRefresh, buttonReply);
+        hbox.getChildren().addAll(buttonCompose, buttonDelete,buttonRefresh, buttonReply,buttonExit);
 
         border.setTop(hbox);
 
@@ -428,28 +432,10 @@ public class Client extends Application // for GUI
 
     public void quitApp() {
         outputToServer.println("close");
+        System.exit(0);
     }
 
 
-
-
-
-    /*
-     * Creates a VBox with a list of links for the left region
-     */
-//    private VBox addVBoxMain() {
-//
-//        VBox vbox = new VBox();
-//        vbox.setPadding(new Insets(10)); // Set all sides to 10
-//        vbox.setSpacing(8);              // Gap between nodes
-//
-//        Text title = new Text("Data");
-//        title.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-//        vbox.getChildren().add(title);
-//
-//
-//        return vbox;
-//    }
 
      //Creates a horizontal flow pane with eight icons in four rows
 
