@@ -202,7 +202,6 @@ public class Client extends Application // for GUI
 
         // Use a border pane as the root for scene
         BorderPane border = new BorderPane();
-        //HBox hbox = addHBoxMain();
         HBox hbox = new HBox();
         hbox.setPadding(new Insets(15, 12, 15, 12));
         hbox.setSpacing(10);   // Gap between nodes
@@ -399,18 +398,18 @@ public class Client extends Application // for GUI
 
     }
 
-
-    public void deleteMail(){
-        outputToServer.println("delete_mail");
-
-    }
-
-    public void getInbox() {
-
-        System.out.println("BEFORE SENDING INBOX REQUEST");
-        outputToServer.println("get_inbox");
-        System.out.println("AFTER SENDING INBOX REQUEST");
-    }
+//
+//    public void deleteMail(){
+//        outputToServer.println("delete_mail");
+//
+//    }
+//
+//    public void getInbox() {
+//
+//        System.out.println("BEFORE SENDING INBOX REQUEST");
+//        outputToServer.println("get_inbox");
+//        System.out.println("AFTER SENDING INBOX REQUEST");
+//    }
 
     public void sendEmail(String to, String message)
     {

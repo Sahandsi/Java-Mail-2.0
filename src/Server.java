@@ -1,22 +1,18 @@
-
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
-        import java.io.Serializable;
-        import java.net.ServerSocket;
-        import java.net.Socket;
+import java.io.Serializable;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.sql.*;
 import java.util.ArrayList;
-        import java.util.Scanner;
+import java.util.Scanner;
 
 public class Server implements Serializable // used to send object from client to server
 {
     // list of users of type string
     private static ArrayList<String> users = new ArrayList<String>();
     private static ArrayList<Email> lstEmails = new ArrayList<Email>();
-   // private static ArrayList<Email> mails = new ArrayList<Email>();
-
-
 
     private static Connection getConnection()
     {
@@ -63,10 +59,6 @@ public class Server implements Serializable // used to send object from client t
 
     public static void main(String[] args) throws IOException
     {
-        // set up 3 users
-//        users.add("U1");
-//        users.add("U2");
-//        users.add("U3");
 
         getConnection();
 
@@ -103,10 +95,10 @@ public class Server implements Serializable // used to send object from client t
 
     }
 
-    public static ArrayList<String> RetrieveUsers()
-    {
-        return users;
-    }
+//    public static ArrayList<String> RetrieveUsers()
+//    {
+//        return users;
+//    }
 
     public static ArrayList<Email> RetrieveEmails()
     {
