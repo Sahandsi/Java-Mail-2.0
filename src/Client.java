@@ -1,14 +1,14 @@
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
@@ -17,6 +17,7 @@ import java.net.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import javafx.scene.control.Button;
 
@@ -56,6 +57,9 @@ public class Client extends Application // for GUI
         inputFromServer = new Scanner(socket.getInputStream());
         outputToServer = new PrintWriter(socket.getOutputStream(), true);
 
+
+
+
         Label message;
         stage.setTitle("Welcome");
         GridPane grid = new GridPane();
@@ -67,38 +71,48 @@ public class Client extends Application // for GUI
         Scene scene = new Scene(grid, 500, 400);
         stage.setScene(scene);
 
-        Text scenetitle = new Text("Welcome");
-        scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
-        grid.add(scenetitle, 0, 0, 2, 1);
 
         Label userName = new Label("User Name:");
         grid.add(userName, 0, 1);
+
         ///this is for the register
         Label regName = new Label("whats your name?");
-        grid.add(regName, 2, 1);
+        grid.add(regName, 0, 2);
         ///this is for the register
 
         TextField userTextField = new TextField();
         grid.add(userTextField, 1, 1);
+        grid.setAlignment(Pos.BOTTOM_CENTER);
+
+
+
+        ImageView image = new ImageView("File:image/1.png");
+    //grid.getChildren().add(new ImageView(image));
+        grid.add(image, 1, 0);
+
+
 
 //this is the register
         TextField regTextField = new TextField();
-        grid.add(regTextField, 3, 1);
+        grid.add(regTextField, 1, 2);
 //this is the register
         Button btn = new Button("Sign in");
         //this is the register
         Button regbtn = new Button("Register");
 //this is the register
         HBox hbBtn = new HBox(10);
-        hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
+        hbBtn.setAlignment(Pos.BOTTOM_CENTER);
         hbBtn.getChildren().add(btn);
         //this is for reguster
         hbBtn.getChildren().add(regbtn);
 //this is the reguster
-        grid.add(hbBtn, 1, 4);
+        grid.add(hbBtn, 2, 1);
+        grid.add(regbtn, 2, 2);
+
+
         final Text actiontarget = new Text();
         message = new Label();
-        btn.setOnAction(e -> validateUsername(userTextField.getText(), message));
+        btn.setOnAction(e -> validateUsername(userTextField.getText(), message,stage));
       //  this is the register
         regbtn.setOnAction(e -> registerUser(regTextField.getText(), message));
         //this is the register
@@ -148,7 +162,7 @@ public class Client extends Application // for GUI
     }
 
 
-    private void validateUsername(String username, Label message) {
+    private void validateUsername(String username, Label message,Stage stage) {
         if (username.isEmpty()) {
             message.setText("Please enter your username");
         } else {
@@ -158,6 +172,7 @@ public class Client extends Application // for GUI
 
             if (serverRequest.equals("true")) {
                 LoadClient();
+                stage.close();
             } else {
                 message.setText("wrong username please try again");
             }
@@ -230,18 +245,21 @@ public class Client extends Application // for GUI
         Button buttonReply = new Button("Reply");
         buttonReply.setPrefSize(100, 20);
 
+        Button buttonCmail = new Button("See Mail");
+        buttonCmail.setPrefSize(100, 20);
+
+
 
         Button buttonDelete = new Button("Delete");
         buttonDelete.setOnAction(e -> { Email selectedItem = inboxTable.getSelectionModel().getSelectedItem();
             int index = inboxTable.getSelectionModel().selectedIndexProperty().get();
             inboxTable.getItems().remove(selectedItem);
-            //outputToServer.println(selectedItem);
             outputToServer.println("delete_mail");
             outputToServer.println(index);
-            //deleteMail();
         });
-        buttonDelete.setPrefSize(100, 20);
 
+
+        buttonDelete.setPrefSize(100, 20);
 
 
         Button buttonExit = new Button("Close App");
@@ -249,13 +267,11 @@ public class Client extends Application // for GUI
         buttonDelete.setPrefSize(100, 20);
 
 
-
-
         Button buttonRefresh = new Button("Refresh");
         buttonRefresh.setOnAction(e -> refreshMail(inboxTable));
         buttonDelete.setPrefSize(100, 20);
 
-        hbox.getChildren().addAll(buttonCompose, buttonDelete,buttonRefresh, buttonReply,buttonExit);
+        hbox.getChildren().addAll(buttonCmail,buttonCompose, buttonDelete,buttonRefresh, buttonReply,buttonExit);
 
         border.setTop(hbox);
 
@@ -266,9 +282,7 @@ public class Client extends Application // for GUI
 
         inboxTable.setOnMouseClicked(e -> SelectedEmail(inboxTable,buttonReply));
 
-
-        // border.setLeft(addVBoxMain());
-        border.setLeft(addFlowPaneMain());
+        
         border.setCenter(inboxTable);
         scene = new Scene(border, 800, 500);
         stage = new Stage();
@@ -277,48 +291,61 @@ public class Client extends Application // for GUI
 
     }
 
+
     private void SelectedEmail(TableView<Email> inboxTable, Button buttonReply)
     {
         Email email = inboxTable.getSelectionModel().getSelectedItem();
         buttonReply.setOnAction(e -> reply(email));
+
+
     }
 
     private void reply(Email emailToReply)
     {
         Stage stage;
         Scene scene;
+        stage = new Stage();
 
+
+        BorderPane border = new BorderPane();
         HBox hbox = new HBox();
         hbox.setPadding(new Insets(15, 12, 15, 12));
-        hbox.setSpacing(100);   // Gap between nodes
+        hbox.setSpacing(10);   // Gap between nodes
+        hbox.setStyle("-fx-background-color: #336699;");
 
-        TextArea textArea = new TextArea(); //making a TexrArea object
-        double height = 400; //making a variable called height with a value 400
-        double width = 500;  //making a variable called height with a value 300
-        HBox.setHgrow(textArea, Priority.ALWAYS);
-        textArea.setWrapText(true);
-        textArea.setPrefHeight(height);  //sets height of the TextArea to 400 pixels
-        textArea.setPrefWidth(width);    //sets width of the TextArea to 300 pixels
-        textArea.setText(emailToReply.getMessage());
 
-        // Use a border pane as the root for scene
-        BorderPane border = new BorderPane();
-
-        border.setTop(hbox);
         TextField mailTo = new TextField();
-        mailTo.setText(emailToReply.getFrom());
         Button buttonSend = new Button("Send");
+
         buttonSend.setPrefSize(100, 20);
-        buttonSend.setOnAction(event -> sendEmail(mailTo.getText(), textArea.getText())) ;
 
 
 
-        hbox.getChildren().addAll(mailTo, textArea, buttonSend );
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 
-        scene = new Scene(border, 700, 400);
-        stage = new Stage();
+
+
+        hbox.getChildren().addAll(mailTo,buttonSend);
+        border.setTop(hbox);
+        TextArea textArea = new TextArea(); //making a TexrArea object
+
+
+
+        textArea.setText("\n\n------------------------------\n"+"------------------------------\n\n"+emailToReply.getMessage());
+                mailTo.setText(emailToReply.getFrom());
+
+        // sender column and data binded to the mail class property
+        buttonSend.setOnAction(event -> sendEmail(mailTo.getText(), textArea.getText(),stage)) ;
+        mailTo.setPromptText("Recipient Mail Address");
+        textArea.setPromptText("Enter text");
+        border.setCenter(textArea);
+        scene = new Scene(border, 800, 500);
+
         stage.setScene(scene);
         stage.show();
+
+
 
     }
 
@@ -359,6 +386,46 @@ public class Client extends Application // for GUI
 
     }
 
+    public void Cmail(Email Cmail)
+    {
+
+
+        Stage stage;
+        Scene scene;
+        stage = new Stage();
+
+
+        BorderPane border = new BorderPane();
+        HBox hbox = new HBox();
+        hbox.setPadding(new Insets(15, 12, 15, 12));
+        hbox.setSpacing(10);   // Gap between nodes
+        hbox.setStyle("-fx-background-color: #336699;");
+
+
+        Button buttonClose = new Button("Close");
+
+        buttonClose.setPrefSize(100, 20);
+
+
+
+
+        hbox.getChildren().addAll(buttonClose);
+        border.setTop(hbox);
+        TextArea textArea = new TextArea(); //making a TexrArea object
+
+
+
+        textArea.setText(Cmail.getMessage());
+
+        border.setCenter(textArea);
+        scene = new Scene(border, 800, 500);
+
+        stage.setScene(scene);
+        stage.show();
+
+
+    }
+
 
     private void sendMail() {
 
@@ -366,52 +433,45 @@ public class Client extends Application // for GUI
         Stage stage;
         Scene scene;
 
+        stage = new Stage();
+
+
+        BorderPane border = new BorderPane();
         HBox hbox = new HBox();
         hbox.setPadding(new Insets(15, 12, 15, 12));
-        hbox.setSpacing(100);   // Gap between nodes
+        hbox.setSpacing(10);   // Gap between nodes
+        hbox.setStyle("-fx-background-color: #336699;");
 
-        TextArea textArea = new TextArea(); //making a TexrArea object
-        double height = 400; //making a variable called height with a value 400
-        double width = 500;  //making a variable called height with a value 300
-        HBox.setHgrow(textArea, Priority.ALWAYS);
-        textArea.setWrapText(true);
-        textArea.setPrefHeight(height);  //sets height of the TextArea to 400 pixels
-        textArea.setPrefWidth(width);    //sets width of the TextArea to 300 pixels
 
-        // Use a border pane as the root for scene
-        BorderPane border = new BorderPane();
 
-        border.setTop(hbox);
         TextField mailTo = new TextField();
         Button buttonSend = new Button("Send");
+
         buttonSend.setPrefSize(100, 20);
-        buttonSend.setOnAction(event -> sendEmail(mailTo.getText(), textArea.getText())) ;
 
 
 
-        hbox.getChildren().addAll(mailTo, textArea, buttonSend );
+        hbox.getChildren().addAll(mailTo,buttonSend);
 
-        scene = new Scene(border, 700, 400);
-        stage = new Stage();
+        border.setTop(hbox);
+
+        TextArea textArea = new TextArea(); //making a TexrArea object
+        // sender column and data binded to the mail class property
+        buttonSend.setOnAction(event -> sendEmail(mailTo.getText(), textArea.getText(),stage)) ;
+        mailTo.setPromptText("Recipient Mail Address");
+        textArea.setPromptText("Enter text");
+        border.setCenter(textArea);
+        scene = new Scene(border, 800, 500);
+
         stage.setScene(scene);
         stage.show();
 
+
     }
 
-//
-//    public void deleteMail(){
-//        outputToServer.println("delete_mail");
-//
-//    }
-//
-//    public void getInbox() {
-//
-//        System.out.println("BEFORE SENDING INBOX REQUEST");
-//        outputToServer.println("get_inbox");
-//        System.out.println("AFTER SENDING INBOX REQUEST");
-//    }
 
-    public void sendEmail(String to, String message)
+
+    public void sendEmail(String to, String message,Stage stage)
     {
         // check if the parameters are empty
         if (to.isEmpty() || message.isEmpty())
@@ -420,13 +480,17 @@ public class Client extends Application // for GUI
         }
         else
         {
+
             outputToServer.println("send_email");
             outputToServer.println(to);
             outputToServer.println(message);
             // close the page after this check how to do this online
         }
 
+        stage.close();
+
     }
+
 
 
     public void quitApp() {
@@ -435,20 +499,6 @@ public class Client extends Application // for GUI
     }
 
 
-
-     //Creates a horizontal flow pane with eight icons in four rows
-
-    private FlowPane addFlowPaneMain() {
-
-        FlowPane flow = new FlowPane();
-        flow.setPadding(new Insets(5, 0, 5, 0));
-        flow.setVgap(4);
-        flow.setHgap(4);
-        flow.setPrefWrapLength(170); // preferred width allows for two columns
-        flow.setStyle("-fx-background-color: DAE6F3;");
-
-        return flow;
-    }
 
 }
 

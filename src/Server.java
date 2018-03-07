@@ -14,6 +14,7 @@ public class Server implements Serializable // used to send object from client t
     private static ArrayList<String> users = new ArrayList<String>();
     private static ArrayList<Email> lstEmails = new ArrayList<Email>();
 
+
     private static Connection getConnection()
     {
         try{
@@ -29,21 +30,13 @@ public class Server implements Serializable // used to send object from client t
 
             Connection conn = DriverManager.getConnection(url, username, password);
             System.out.println("Connected");
-            //Connection conn = getConnection();
-            //connection();
             statement = conn.createStatement();
             String sql = "SELECT Name from Users";
-
-
-            System.out.println(sql);
             ResultSet rs = statement.executeQuery(sql);
-            // return conn;
-
             while (rs.next()) {
 
 
                 String names = rs.getString("Name");
-                System.out.println("names : " + names);
                 users.add(names);
 
             }
@@ -95,14 +88,11 @@ public class Server implements Serializable // used to send object from client t
 
     }
 
-//    public static ArrayList<String> RetrieveUsers()
-//    {
-//        return users;
-//    }
 
     public static ArrayList<Email> RetrieveEmails()
     {
         return lstEmails;
+
     }
 
 
@@ -164,11 +154,6 @@ public class Server implements Serializable // used to send object from client t
 
     }
 
-    // get the mail from the server so it can be accessed in the clienthandler
-  //  private static ArrayList<Email> getMail()
-//    {
-//        return mails;
-//    }
 
 
 }
@@ -188,7 +173,7 @@ class ClientHandler extends Thread implements Serializable
     {
         this.username = username;
         this.client = client;
-        System.out.println("BEFORE TRY");
+
         try
         {
             input = new Scanner(client.getInputStream());
@@ -204,10 +189,9 @@ class ClientHandler extends Thread implements Serializable
 
     public void run()
     {
-        // recieve request from the server
+        // receive request from the server
         String request = input.nextLine();
 
-        System.out.println(request);
         // check the request
         while(!request.equals("close"))
         {
@@ -224,7 +208,7 @@ class ClientHandler extends Thread implements Serializable
                         lstInbox.add(inbox);
                     }
                 }
-               // lstInbox.remove(index here)
+
                 ObjectOutputStream os = null;
                 try
                 {
@@ -269,7 +253,6 @@ class ClientHandler extends Thread implements Serializable
                 Server.RetrieveEmails().add(email);
 
 
-
                 for (Email inbox : Server.RetrieveEmails())
                 {
                     System.out.println("From:"  + inbox.getFrom());
@@ -279,7 +262,6 @@ class ClientHandler extends Thread implements Serializable
             }
             else if (request.equals("delete_mail"))
             {
-                System.out.println("hahay");
                 String i = input.nextLine();
                 int indexToRemove = Integer.parseInt(i);
                 System.out.println(indexToRemove);
