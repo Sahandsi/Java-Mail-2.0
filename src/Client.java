@@ -6,7 +6,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
@@ -212,6 +211,8 @@ public class Client extends Application // for GUI
         ObservableList<Email> oMail = FXCollections.observableArrayList(inbox);
 
 
+
+
         Stage stage;
         Scene scene;
 
@@ -219,7 +220,7 @@ public class Client extends Application // for GUI
         BorderPane border = new BorderPane();
         HBox hbox = new HBox();
         hbox.setPadding(new Insets(15, 12, 15, 12));
-        hbox.setSpacing(10);   // Gap between nodes
+        hbox.setSpacing(30);   // Gap between nodes
         hbox.setStyle("-fx-background-color: #336699;");
 
 
@@ -234,6 +235,7 @@ public class Client extends Application // for GUI
 
 
         TableView<Email> inboxTable = new TableView<Email>();
+
         // add columns
         inboxTable.getColumns().addAll(sentBy, message);
 
@@ -250,6 +252,12 @@ public class Client extends Application // for GUI
 
 
 
+
+
+
+
+
+
         Button buttonDelete = new Button("Delete");
         buttonDelete.setOnAction(e -> { Email selectedItem = inboxTable.getSelectionModel().getSelectedItem();
             int index = inboxTable.getSelectionModel().selectedIndexProperty().get();
@@ -258,18 +266,17 @@ public class Client extends Application // for GUI
             outputToServer.println(index);
         });
 
-
         buttonDelete.setPrefSize(100, 20);
 
 
         Button buttonExit = new Button("Close App");
         buttonExit.setOnAction(e ->  quitApp());
-        buttonDelete.setPrefSize(100, 20);
+        buttonExit.setPrefSize(100, 20);
 
 
         Button buttonRefresh = new Button("Refresh");
         buttonRefresh.setOnAction(e -> refreshMail(inboxTable));
-        buttonDelete.setPrefSize(100, 20);
+        buttonRefresh.setPrefSize(100, 20);
 
         hbox.getChildren().addAll(buttonCmail,buttonCompose, buttonDelete,buttonRefresh, buttonReply,buttonExit);
 
@@ -280,9 +287,25 @@ public class Client extends Application // for GUI
 
         inboxTable.setItems(oMail);
 
-        inboxTable.setOnMouseClicked(e -> SelectedEmail(inboxTable,buttonReply));
 
-        
+
+        inboxTable.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
+
+            if( e.isPrimaryButtonDown() && e.isSecondaryButtonDown()) {
+                System.out.println( "Both down");
+            } else if( e.isPrimaryButtonDown()) {
+                System.out.println( "Primary down");
+                inboxTable.setOnMouseClicked(q -> SelectedEmail(inboxTable,buttonReply));
+            } else if( e.isSecondaryButtonDown()) {
+                       inboxTable.setOnMouseClicked(q -> SeeEmail(inboxTable));
+
+                System.out.println( "Secondary down");
+            }
+
+        });
+
+
+
         border.setCenter(inboxTable);
         scene = new Scene(border, 800, 500);
         stage = new Stage();
@@ -296,6 +319,16 @@ public class Client extends Application // for GUI
     {
         Email email = inboxTable.getSelectionModel().getSelectedItem();
         buttonReply.setOnAction(e -> reply(email));
+
+
+    }
+
+    private void SeeEmail(TableView<Email> inboxTable)
+    {
+        Email email = inboxTable.getSelectionModel().getSelectedItem();
+
+        Cmail(email);
+
 
 
     }
@@ -422,10 +455,14 @@ public class Client extends Application // for GUI
 
         stage.setScene(scene);
         stage.show();
+        buttonClose.setOnAction(e -> stageclose(stage));
 
 
     }
+    private void stageclose (Stage stage){
+        stage.close();
 
+    }
 
     private void sendMail() {
 
