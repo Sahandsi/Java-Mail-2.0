@@ -1,10 +1,9 @@
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
+import javafx.collections.*;
+import javafx.geometry.*;
 import javafx.scene.Scene;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -13,20 +12,15 @@ import javafx.stage.Stage;
 import javafx.scene.control.*;
 import java.io.*;
 import java.net.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.text.SimpleDateFormat;
+import java.sql.*;
 import java.util.*;
-import javafx.scene.control.Button;
 
 
-public class Client extends Application // for GUI
+public class Client extends Application     // For GUI
 {
 
-    private PrintWriter outputToServer; // send message to server
-    private Scanner inputFromServer;    // gets response back from the server
-    private String username;
+    private PrintWriter outputToServer;     // Send message to server
+    private Scanner inputFromServer;        // Gets response back from the server
     private Socket socket;
     private static InetAddress host = null;
     final int PORT = 6666;
@@ -38,25 +32,18 @@ public class Client extends Application // for GUI
             System.out.println("Host ID Not Found");
         }
 
-
-        // run the app with server running
         do {
-            launch(args);
-        } while (true);
-
+            launch(args);                   // Run the app with server running
+        }
+        while (true);
 
     }
 
-    // GUI
-
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) throws Exception {                               // GUI
 
         socket = new Socket(host, PORT);
-        // scanner set up so that it can scan for any input stream (responses) that come from the server
-        inputFromServer = new Scanner(socket.getInputStream());
-        outputToServer = new PrintWriter(socket.getOutputStream(), true);
-
-
+        inputFromServer = new Scanner(socket.getInputStream());                     // Scan input streams from Server side
+        outputToServer = new PrintWriter(socket.getOutputStream(), true); // For sending commands to Server
 
 
         Label message;
@@ -71,86 +58,87 @@ public class Client extends Application // for GUI
         stage.setScene(scene);
 
 
-        Label userName = new Label("User Name:");
+        Label userName = new Label("User Name:");              // Username Label
         grid.add(userName, 0, 1);
 
-        ///this is for the register
-        Label regName = new Label("whats your name?");
-        grid.add(regName, 0, 2);
-        ///this is for the register
 
-        TextField userTextField = new TextField();
+        Label regName = new Label("whats your name?");         // Label for the Register
+        grid.add(regName, 0, 2);
+
+        TextField userTextField = new TextField();                  // Textfield for Username
         grid.add(userTextField, 1, 1);
         grid.setAlignment(Pos.BOTTOM_CENTER);
 
 
+        TextField regTextField = new TextField();                   // Textfield for registration
+        grid.add(regTextField, 1, 2);
 
-        ImageView image = new ImageView("File:image/1.png");
-    //grid.getChildren().add(new ImageView(image));
+
+        ImageView image = new ImageView("File:image/1.png");    // Welcome page Image
         grid.add(image, 1, 0);
 
+        Button btn = new Button("Sign in");                    // Sign in Button
 
+        Button regbtn = new Button("Register");                // Register Button
 
-//this is the register
-        TextField regTextField = new TextField();
-        grid.add(regTextField, 1, 2);
-//this is the register
-        Button btn = new Button("Sign in");
-        //this is the register
-        Button regbtn = new Button("Register");
-//this is the register
         HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_CENTER);
         hbBtn.getChildren().add(btn);
-        //this is for reguster
-        hbBtn.getChildren().add(regbtn);
-//this is the reguster
+
+        hbBtn.getChildren().add(regbtn);                            // Adding the buttons to grid
+
         grid.add(hbBtn, 2, 1);
         grid.add(regbtn, 2, 2);
 
 
         final Text actiontarget = new Text();
         message = new Label();
+
+        grid.add(message,1,3);
+
         btn.setOnAction(e -> validateUsername(userTextField.getText(), message,stage));
-      //  this is the register
         regbtn.setOnAction(e -> registerUser(regTextField.getText(), message));
-        //this is the register
+
         grid.add(actiontarget, 1, 6);
         stage.show();
     }
 
 
-
-    private static Connection getConnection()
+    private static Connection getConnection()                      // All the settings for the SQL connection
     {
-        try{
+        try
+        {
             String driver = "com.mysql.jdbc.Driver";
             String url = "jdbc:mysql://localhost:8889/Java";
             String username = "root";
             String password = "root";
-
             Class.forName(driver);
-
             Connection conn = DriverManager.getConnection(url, username, password);
             System.out.println("Connected");
             return conn;
 
-        } catch(Exception e){
+        }
+        catch(Exception e)
+        {
             System.out.println(e);
         }
         return null;
     }
 
-
-    private void registerUser(String username, Label message) {
+    private void registerUser(String username, Label message)      // For registering the user to the SQL
+    {
         String t = username;
 
-        try{
+        try
+        {
             Connection con = getConnection();
             PreparedStatement posted = con.prepareStatement("INSERT INTO Users (Name) VALUES ('"+t+"')");
-
             posted.executeUpdate();
-        }catch (Exception e){
+            message.setText("Register Complete!");
+
+        }
+        catch (Exception e)
+        {
             System.out.println(e);
         }
 
@@ -160,28 +148,32 @@ public class Client extends Application // for GUI
 
     }
 
+    private void validateUsername(String username, Label message,Stage stage)
+    {
+        if (username.isEmpty())
+        {
+            message.setText("Enter your username!");
+        }
+        else {
+            outputToServer.println(username);                      // Send username across to the server
+            String serverRequest = inputFromServer.nextLine();     // Get the response back
 
-    private void validateUsername(String username, Label message,Stage stage) {
-        if (username.isEmpty()) {
-            message.setText("Please enter your username");
-        } else {
-            // send username across to the server
-            outputToServer.println(username);
-            String serverRequest = inputFromServer.nextLine();
-
-            if (serverRequest.equals("true")) {
+            if (serverRequest.equals("true"))
+            {
                 LoadClient();
                 stage.close();
-            } else {
-                message.setText("wrong username please try again");
             }
+            else
+                {
+                message.setText("Wrong username!");
+                }
         }
     }
 
+    private void LoadClient()                                         // The main page for the inbox
 
-    private void LoadClient() {
-
-        outputToServer.println("get_inbox");
+    {
+        outputToServer.println("get_inbox");                          // Tell server get inbox items
         ArrayList<Email> inbox = null;
         ObjectInputStream is = null;
 
@@ -196,7 +188,7 @@ public class Client extends Application // for GUI
 
         try
         {
-            inbox = (ArrayList<Email>) is.readObject();
+            inbox = (ArrayList<Email>) is.readObject();               // Store mails in array
 
         }
         catch (IOException i)
@@ -209,8 +201,6 @@ public class Client extends Application // for GUI
         }
 
         ObservableList<Email> oMail = FXCollections.observableArrayList(inbox);
-
-
 
 
         Stage stage;
@@ -236,8 +226,7 @@ public class Client extends Application // for GUI
 
         TableView<Email> inboxTable = new TableView<Email>();
 
-        // add columns
-        inboxTable.getColumns().addAll(sentBy, message);
+        inboxTable.getColumns().addAll(sentBy, message);          // Add columns of the sender and message
 
 
         Button buttonCompose = new Button("Compose");
@@ -246,16 +235,6 @@ public class Client extends Application // for GUI
 
         Button buttonReply = new Button("Reply");
         buttonReply.setPrefSize(100, 20);
-
-        Button buttonCmail = new Button("See Mail");
-        buttonCmail.setPrefSize(100, 20);
-
-
-
-
-
-
-
 
 
         Button buttonDelete = new Button("Delete");
@@ -278,25 +257,26 @@ public class Client extends Application // for GUI
         buttonRefresh.setOnAction(e -> refreshMail(inboxTable));
         buttonRefresh.setPrefSize(100, 20);
 
-        hbox.getChildren().addAll(buttonCmail,buttonCompose, buttonDelete,buttonRefresh, buttonReply,buttonExit);
+        hbox.getChildren().addAll(buttonCompose, buttonDelete,buttonRefresh, buttonReply,buttonExit);
 
         border.setTop(hbox);
-
-
-        // sender column and data binded to the mail class property
-
-        inboxTable.setItems(oMail);
-
-
+        inboxTable.setItems(oMail);             // Joining the column an data
 
         inboxTable.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
 
-            if( e.isPrimaryButtonDown() && e.isSecondaryButtonDown()) {
+            if( e.isPrimaryButtonDown() && e.isSecondaryButtonDown())
+            {
                 System.out.println( "Both down");
-            } else if( e.isPrimaryButtonDown()) {
+            }
+
+            else if( e.isPrimaryButtonDown())
+            {
                 System.out.println( "Primary down");
                 inboxTable.setOnMouseClicked(q -> SelectedEmail(inboxTable,buttonReply));
-            } else if( e.isSecondaryButtonDown()) {
+            }
+
+            else if( e.isSecondaryButtonDown())
+            {
                        inboxTable.setOnMouseClicked(q -> SeeEmail(inboxTable));
 
                 System.out.println( "Secondary down");
@@ -304,33 +284,23 @@ public class Client extends Application // for GUI
 
         });
 
-
-
         border.setCenter(inboxTable);
         scene = new Scene(border, 800, 500);
         stage = new Stage();
         stage.setScene(scene);
         stage.show();
-
     }
-
 
     private void SelectedEmail(TableView<Email> inboxTable, Button buttonReply)
     {
         Email email = inboxTable.getSelectionModel().getSelectedItem();
         buttonReply.setOnAction(e -> reply(email));
-
-
     }
 
     private void SeeEmail(TableView<Email> inboxTable)
     {
         Email email = inboxTable.getSelectionModel().getSelectedItem();
-
         Cmail(email);
-
-
-
     }
 
     private void reply(Email emailToReply)
@@ -339,24 +309,15 @@ public class Client extends Application // for GUI
         Scene scene;
         stage = new Stage();
 
-
         BorderPane border = new BorderPane();
         HBox hbox = new HBox();
         hbox.setPadding(new Insets(15, 12, 15, 12));
         hbox.setSpacing(10);   // Gap between nodes
         hbox.setStyle("-fx-background-color: #336699;");
 
-
         TextField mailTo = new TextField();
         Button buttonSend = new Button("Send");
-
         buttonSend.setPrefSize(100, 20);
-
-
-
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-
 
 
         hbox.getChildren().addAll(mailTo,buttonSend);
@@ -364,12 +325,11 @@ public class Client extends Application // for GUI
         TextArea textArea = new TextArea(); //making a TexrArea object
 
 
-
         textArea.setText("\n\n------------------------------\n"+"------------------------------\n\n"+emailToReply.getMessage());
                 mailTo.setText(emailToReply.getFrom());
 
-        // sender column and data binded to the mail class property
-        buttonSend.setOnAction(event -> sendEmail(mailTo.getText(), textArea.getText(),stage)) ;
+        buttonSend.setOnAction(event -> sendEmail(mailTo.getText(), textArea.getText(),stage)) ;     // Sender column and data added to the mail class
+
         mailTo.setPromptText("Recipient Mail Address");
         textArea.setPromptText("Enter text");
         border.setCenter(textArea);
@@ -377,8 +337,6 @@ public class Client extends Application // for GUI
 
         stage.setScene(scene);
         stage.show();
-
-
 
     }
 
@@ -422,11 +380,9 @@ public class Client extends Application // for GUI
     public void Cmail(Email Cmail)
     {
 
-
         Stage stage;
         Scene scene;
         stage = new Stage();
-
 
         BorderPane border = new BorderPane();
         HBox hbox = new HBox();
@@ -434,66 +390,53 @@ public class Client extends Application // for GUI
         hbox.setSpacing(10);   // Gap between nodes
         hbox.setStyle("-fx-background-color: #336699;");
 
-
         Button buttonClose = new Button("Close");
-
         buttonClose.setPrefSize(100, 20);
-
-
 
 
         hbox.getChildren().addAll(buttonClose);
         border.setTop(hbox);
+
         TextArea textArea = new TextArea(); //making a TexrArea object
-
-
-
         textArea.setText(Cmail.getMessage());
 
         border.setCenter(textArea);
-        scene = new Scene(border, 800, 500);
+        scene = new Scene(border, 500, 500);
 
         stage.setScene(scene);
         stage.show();
         buttonClose.setOnAction(e -> stageclose(stage));
 
-
     }
-    private void stageclose (Stage stage){
+
+    private void stageclose (Stage stage)
+    {
         stage.close();
-
     }
 
-    private void sendMail() {
-
+    private void sendMail()
+    {
 
         Stage stage;
         Scene scene;
-
         stage = new Stage();
-
 
         BorderPane border = new BorderPane();
         HBox hbox = new HBox();
         hbox.setPadding(new Insets(15, 12, 15, 12));
         hbox.setSpacing(10);   // Gap between nodes
         hbox.setStyle("-fx-background-color: #336699;");
-
 
 
         TextField mailTo = new TextField();
         Button buttonSend = new Button("Send");
 
         buttonSend.setPrefSize(100, 20);
-
-
-
         hbox.getChildren().addAll(mailTo,buttonSend);
 
         border.setTop(hbox);
+        TextArea textArea = new TextArea();
 
-        TextArea textArea = new TextArea(); //making a TexrArea object
-        // sender column and data binded to the mail class property
         buttonSend.setOnAction(event -> sendEmail(mailTo.getText(), textArea.getText(),stage)) ;
         mailTo.setPromptText("Recipient Mail Address");
         textArea.setPromptText("Enter text");
@@ -506,36 +449,30 @@ public class Client extends Application // for GUI
 
     }
 
-
-
     public void sendEmail(String to, String message,Stage stage)
     {
-        // check if the parameters are empty
-        if (to.isEmpty() || message.isEmpty())
+
+        if (to.isEmpty() || message.isEmpty()) // Check if the parameters are empty
         {
             System.out.println("One of these fields are empty");
         }
         else
         {
-
             outputToServer.println("send_email");
             outputToServer.println(to);
             outputToServer.println(message);
-            // close the page after this check how to do this online
+
         }
 
-        stage.close();
+        stage.close();                        // Close the page after this check how to do this online
 
     }
 
-
-
-    public void quitApp() {
+    public void quitApp()
+    {
         outputToServer.println("close");
         System.exit(0);
     }
-
-
 
 }
 

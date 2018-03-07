@@ -8,12 +8,11 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Server implements Serializable // used to send object from client to server
+public class Server implements Serializable
 {
-    // list of users of type string
-    private static ArrayList<String> users = new ArrayList<String>();
-    private static ArrayList<Email> lstEmails = new ArrayList<Email>();
 
+    private static ArrayList<String> users = new ArrayList<String>();       // List of users array(list)
+    private static ArrayList<Email> lstEmails = new ArrayList<Email>();     // List of emails array(list)
 
     private static Connection getConnection()
     {
@@ -33,7 +32,9 @@ public class Server implements Serializable // used to send object from client t
             statement = conn.createStatement();
             String sql = "SELECT Name from Users";
             ResultSet rs = statement.executeQuery(sql);
-            while (rs.next()) {
+
+            while (rs.next())
+            {
 
 
                 String names = rs.getString("Name");
@@ -42,7 +43,10 @@ public class Server implements Serializable // used to send object from client t
             }
 
 
-        } catch(Exception e){
+        }
+
+        catch(Exception e)
+        {
             System.out.println(e);
         }
         return null;
@@ -51,19 +55,19 @@ public class Server implements Serializable // used to send object from client t
 
 
     public static void main(String[] args) throws IOException
+
     {
 
         getConnection();
+        Socket client;                    // Client socket
 
-        Socket client; // client
-
-        ServerSocket serverSocket = null; // server
+        ServerSocket serverSocket = null; // Server socket
         final int PORT = 6666;
 
         ClientHandler clientHandler;
 
-        // set up the server socket
-        try
+
+        try                               // Set up the server socket
         {
             serverSocket = new ServerSocket(PORT);
         }
@@ -75,19 +79,18 @@ public class Server implements Serializable // used to send object from client t
 
         System.out.println("\n Server available.!");
 
-        do {
-            client = serverSocket.accept(); // accept the client to the server
-            // create a function that will validate the user
-            String validUser = validateUser(client);
+        do
+            {
+            client = serverSocket.accept();             // Accept the client to the server
+
+            String validUser = validateUser(client);    // Function that to validate the user
             clientHandler = new ClientHandler(validUser, client);
-            clientHandler.start(); // calls the run function
+            clientHandler.start();                      // Calls the run function
 
-        } while (true);
-
-
+            }
+        while (true);
 
     }
-
 
     public static ArrayList<Email> RetrieveEmails()
     {
@@ -105,10 +108,10 @@ public class Server implements Serializable // used to send object from client t
 
         try
         {
-            // allows the server to retrieve the input from the client
-            inputFromClient = new Scanner(client.getInputStream());
-            // allow server to send things to the client
-            outputToClient = new PrintWriter(client.getOutputStream(), true);
+
+            inputFromClient = new Scanner(client.getInputStream());                               // Server to get the input from the client
+            outputToClient = new PrintWriter(client.getOutputStream(), true);            // Server to send data to the client
+
 
         }
         catch(IOException io)
@@ -117,18 +120,16 @@ public class Server implements Serializable // used to send object from client t
         }
 
 
-        // get the input from the client
         String userToValidate = inputFromClient.nextLine();
 
         while  (validUser == false)
         {
             for(String username : users)
             {
-                // check the user to validate matches the user from the client
-                if (username.equals(userToValidate))
+
+                if (username.equals(userToValidate)) // Match the user array to the name inputted
                 {
-                    // tell the client that user is valid
-                    validUser = true;
+                    validUser = true;                // User is valid send to client
                     break;
                 }
                 else
@@ -139,8 +140,8 @@ public class Server implements Serializable // used to send object from client t
 
             if(validUser == false)
             {
-                // user is invalid so wait for a new user to pass from the client to the server
-                outputToClient.println("false");
+
+                outputToClient.println("false");    // For right username
                 userToValidate = inputFromClient.nextLine();
             }
             else
@@ -149,22 +150,18 @@ public class Server implements Serializable // used to send object from client t
             }
 
         }
-        // return the correct username
-        return userToValidate;
+
+        return userToValidate;                      // Return right username
 
     }
 
-
-
 }
 
-// each client will have their unique username
+
 class ClientHandler extends Thread implements Serializable
 {
     private Socket client;
-    // retrieve requests from the client
     private Scanner input;
-    // send requests to the client
     private PrintWriter output;
 
     private String username;
@@ -182,20 +179,18 @@ class ClientHandler extends Thread implements Serializable
 
         catch(IOException io)
         {
-            System.out.println("Client Handler not set up properly");
+            System.out.println("Client Handler Error");
         }
 
     }
 
     public void run()
     {
-        // receive request from the server
+
         String request = input.nextLine();
 
-        // check the request
         while(!request.equals("close"))
         {
-            // do whatever the user wants to do
             if (request.equals("get_inbox"))
             {
                 System.out.println("INSIDE INBOX REQUEST");
@@ -228,17 +223,20 @@ class ClientHandler extends Thread implements Serializable
 
                 String t = input.nextLine();
 
-                try{
-                        System.out.println("REGISTER REQUEST");
+                try
+                {
+                    System.out.println("REGISTER REQUEST");
                     Connection con = null;
                     PreparedStatement posted = con.prepareStatement("INSERT INTO Users (Name) VALUES ('"+t+"')");
-
                     posted.executeUpdate();
-                }catch (Exception e){
+                }
+                catch (Exception e)
+                {
                     System.out.println(e);
                 }
 
-                finally {
+                finally
+                {
                     System.out.println("Insert complete");
                 }
         }
@@ -249,9 +247,7 @@ class ClientHandler extends Thread implements Serializable
                 String message = input.nextLine();
                 Email email = new Email(username, to, message);
 
-                // add the email
                 Server.RetrieveEmails().add(email);
-
 
                 for (Email inbox : Server.RetrieveEmails())
                 {
@@ -260,6 +256,7 @@ class ClientHandler extends Thread implements Serializable
                     System.out.println("Message:"  + inbox.getMessage());
                 }
             }
+
             else if (request.equals("delete_mail"))
             {
                 String i = input.nextLine();
@@ -269,10 +266,9 @@ class ClientHandler extends Thread implements Serializable
                 Server.RetrieveEmails().remove(indexToRemove);
             }
 
-            request = input.nextLine(); // get new request from server
+            request = input.nextLine();                 // Wait for the new request
         }
 
-        // end the client connection
         try
         {
             System.out.println("Ending connection");
@@ -285,6 +281,5 @@ class ClientHandler extends Thread implements Serializable
         }
 
     }
-
 
 }

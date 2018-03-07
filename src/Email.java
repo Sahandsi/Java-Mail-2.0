@@ -1,12 +1,13 @@
 import java.io.Serializable;
 
-public class Email implements Serializable {
+public class Email implements Serializable
+{
 
-    // provide encapsulation
+
     private String from, to, message;
 
-    // constructor
     public Email(String from, String to, String message)
+
     {
         this.from = from;
         this.to = to;
@@ -23,12 +24,9 @@ public class Email implements Serializable {
         return to;
     }
 
-
     public String getMessage()
     {
         return message;
     }
-
-
 
 }
