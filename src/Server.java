@@ -1,7 +1,4 @@
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
-import java.io.Serializable;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.*;
@@ -13,6 +10,8 @@ public class Server implements Serializable
 
     private static ArrayList<String> users = new ArrayList<String>();       // List of users array(list)
     private static ArrayList<Email> lstEmails = new ArrayList<Email>();     // List of emails array(list)
+    private static ArrayList<String> messages = new ArrayList<String>();     // List of emails array(list)
+
 
     private static Connection getConnection()
     {
@@ -94,6 +93,7 @@ public class Server implements Serializable
 
     public static ArrayList<Email> RetrieveEmails()
     {
+
         return lstEmails;
 
     }
@@ -102,14 +102,17 @@ public class Server implements Serializable
 
     private static String validateUser(Socket client)
     {
-        Scanner inputFromClient = null;
+       Scanner inputFromClient = null;
+       // BufferedReader inputFromClient = null;
         PrintWriter outputToClient = null;
         boolean validUser = false;
 
         try
         {
 
-            inputFromClient = new Scanner(client.getInputStream());                               // Server to get the input from the client
+          inputFromClient = new Scanner(client.getInputStream());                               // Server to get the input from the client
+           // inputFromClient = new BufferedReader(client);                               // Server to get the input from the client
+
             outputToClient = new PrintWriter(client.getOutputStream(), true);            // Server to send data to the client
 
 
@@ -187,65 +190,67 @@ class ClientHandler extends Thread implements Serializable
     public void run()
     {
 
+String line =null;
         String request = input.nextLine();
 
-        while(!request.equals("close"))
-        {
-            if (request.equals("get_inbox"))
-            {
+        while(!request.equals("close")) {
+            if (request.equals("get_inbox")) {
                 System.out.println("INSIDE INBOX REQUEST");
 
                 ArrayList<Email> lstInbox = new ArrayList<Email>();
-                for (Email inbox : Server.RetrieveEmails())
-                {
-                    if (inbox.getTo().equals(username))
-                    {
+                for (Email inbox : Server.RetrieveEmails()) {
+                    if (inbox.getTo().equals(username)) {
                         lstInbox.add(inbox);
                     }
                 }
 
                 ObjectOutputStream os = null;
-                try
-                {
-                    os =
-                            new ObjectOutputStream(client.getOutputStream());
+                try {
+
+                    os = new ObjectOutputStream(client.getOutputStream());
+
+//                    while ((client.getOutputStream()) != null) {
                     os.writeObject(lstInbox);
-                }
-                catch (IOException e)
-                {
+//                    }
+                    System.out.println(lstInbox);
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
 
 
-            }
-            else if (request.equals("register_user"))
-            {
+            } else if (request.equals("register_user")) {
 
                 String t = input.nextLine();
 
-                try
-                {
+                try {
                     System.out.println("REGISTER REQUEST");
                     Connection con = null;
-                    PreparedStatement posted = con.prepareStatement("INSERT INTO Users (Name) VALUES ('"+t+"')");
+                    PreparedStatement posted = con.prepareStatement("INSERT INTO Users (Name) VALUES ('" + t + "')");
                     posted.executeUpdate();
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     System.out.println(e);
-                }
-
-                finally
-                {
+                } finally {
                     System.out.println("Insert complete");
                 }
-        }
-            else if (request.equals("send_email"))
-            {
+            } else if (request.equals("send_email")) {
                 System.out.println("INSIDE SEND EMAIL REQUEST");
                 String to = input.nextLine();
+
+
+
+                String attachment =input.nextLine();
+//                while (input.hasNextLine())
+//                {
+              //  String message = null;
+
                 String message = input.nextLine();
-                Email email = new Email(username, to, message);
+                  //  attachment = input.nextLine();
+                    System.out.println(message);
+
+//                }
+
+
+                Email email = new Email(username, to, message,attachment);
 
                 Server.RetrieveEmails().add(email);
 
@@ -254,6 +259,8 @@ class ClientHandler extends Thread implements Serializable
                     System.out.println("From:"  + inbox.getFrom());
                     System.out.println("To:"  + inbox.getTo());
                     System.out.println("Message:"  + inbox.getMessage());
+                    System.out.println("Attachment:"  + inbox.getattachment());
+
                 }
             }
 
@@ -277,7 +284,7 @@ class ClientHandler extends Thread implements Serializable
         }
         catch(IOException io)
         {
-            System.out.println("Coulnd't close connection");
+            System.out.println("Could't close connection");
         }
 
     }

@@ -8,6 +8,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
 import java.io.*;
@@ -257,7 +258,9 @@ public class Client extends Application     // For GUI
         buttonRefresh.setOnAction(e -> refreshMail(inboxTable));
         buttonRefresh.setPrefSize(100, 20);
 
-        hbox.getChildren().addAll(buttonCompose, buttonDelete,buttonRefresh, buttonReply,buttonExit);
+
+
+        hbox.getChildren().addAll(buttonCompose, buttonDelete,buttonRefresh , buttonReply,buttonExit);
 
         border.setTop(hbox);
         inboxTable.setItems(oMail);             // Joining the column an data
@@ -320,7 +323,15 @@ public class Client extends Application     // For GUI
         buttonSend.setPrefSize(100, 20);
 
 
-        hbox.getChildren().addAll(mailTo,buttonSend);
+
+        Button buttonAttach = new Button("Attach");
+        buttonAttach.setOnAction(e -> attachMail());
+        buttonAttach.setPrefSize(100, 20);
+
+
+
+
+        hbox.getChildren().addAll(mailTo,buttonSend,buttonAttach);
         border.setTop(hbox);
         TextArea textArea = new TextArea(); //making a TexrArea object
 
@@ -328,7 +339,7 @@ public class Client extends Application     // For GUI
         textArea.setText("\n\n------------------------------\n"+"------------------------------\n\n"+emailToReply.getMessage());
                 mailTo.setText(emailToReply.getFrom());
 
-        buttonSend.setOnAction(event -> sendEmail(mailTo.getText(), textArea.getText(),stage)) ;     // Sender column and data added to the mail class
+        buttonSend.setOnAction(event -> sendEmail(mailTo.getText(), textArea.getText(),buttonAttach.) ;     // Sender column and data added to the mail class
 
         mailTo.setPromptText("Recipient Mail Address");
         textArea.setPromptText("Enter text");
@@ -376,6 +387,24 @@ public class Client extends Application     // For GUI
         inboxTable.setItems(oMail);
 
     }
+
+//    public void attachMail(){
+//
+//
+//        // File chooser code goes here usually
+//        FileChooser fileChooser = new FileChooser();
+//        fileChooser.setTitle("Open Resource File");
+//        File selectedFile = fileChooser.showOpenDialog(null);
+//        if (selectedFile !=null)
+//        {
+//            selectedFile.getAbsolutePath();
+//        }
+//        System.out.println(selectedFile);
+//
+//        System.out.println("choosing");
+//
+//    }
+
 
     public void Cmail(Email Cmail)
     {
@@ -427,17 +456,37 @@ public class Client extends Application     // For GUI
         hbox.setSpacing(10);   // Gap between nodes
         hbox.setStyle("-fx-background-color: #336699;");
 
+        FileChooser fileChooser = new FileChooser();
+
+        fileChooser.setTitle("Open Resource File");
+        File selectedFile = fileChooser.showOpenDialog(null);
+        if (selectedFile !=null)
+        {
+            selectedFile.getAbsolutePath();
+        }
+        System.out.println(selectedFile);
+
+        System.out.println("choosing");
+
+        Button buttonAttach = new Button("Attach");
+        buttonAttach.setOnAction(e -> selectFile);
+        buttonAttach.setPrefSize(100, 20);
+
+
+
+
 
         TextField mailTo = new TextField();
         Button buttonSend = new Button("Send");
 
         buttonSend.setPrefSize(100, 20);
-        hbox.getChildren().addAll(mailTo,buttonSend);
+        hbox.getChildren().addAll(mailTo,buttonSend,buttonAttach);
 
         border.setTop(hbox);
         TextArea textArea = new TextArea();
 
-        buttonSend.setOnAction(event -> sendEmail(mailTo.getText(), textArea.getText(),stage)) ;
+        buttonSend.setOnAction(event -> sendEmail(mailTo.getText(), textArea.getText(),stage,selectedFile.getAbsolutePath());
+
         mailTo.setPromptText("Recipient Mail Address");
         textArea.setPromptText("Enter text");
         border.setCenter(textArea);
@@ -449,8 +498,10 @@ public class Client extends Application     // For GUI
 
     }
 
-    public void sendEmail(String to, String message,Stage stage)
+    public void sendEmail(String to, String message,Stage stage,String attachMail)
     {
+
+        String finish =".";
 
         if (to.isEmpty() || message.isEmpty()) // Check if the parameters are empty
         {
@@ -460,7 +511,11 @@ public class Client extends Application     // For GUI
         {
             outputToServer.println("send_email");
             outputToServer.println(to);
-            outputToServer.println(message);
+            outputToServer.println(message+finish);
+            outputToServer.println(attachMail);
+            System.out.println(message);
+            System.out.println(attachMail);
+
 
         }
 

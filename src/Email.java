@@ -4,14 +4,15 @@ public class Email implements Serializable
 {
 
 
-    private String from, to, message;
+    private String from, to, message ,attachment;
 
-    public Email(String from, String to, String message)
+    public Email(String from, String to, String message , String attachment)
 
     {
         this.from = from;
         this.to = to;
         this.message = message;
+        this.attachment =attachment;
     }
 
     public String getFrom()
@@ -28,5 +29,11 @@ public class Email implements Serializable
     {
         return message;
     }
+
+    public String getattachment()
+    {
+        return attachment;
+    }
+
 
 }
