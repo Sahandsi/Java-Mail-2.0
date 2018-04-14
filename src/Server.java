@@ -237,15 +237,16 @@ String line =null;
                 String to = input.nextLine();
 
 
+                String message = input.nextLine();
 
                 String attachment =input.nextLine();
 //                while (input.hasNextLine())
 //                {
               //  String message = null;
 
-                String message = input.nextLine();
+
                   //  attachment = input.nextLine();
-                    System.out.println(message);
+                   // System.out.println(message);
 
 //                }
 
@@ -259,7 +260,7 @@ String line =null;
                     System.out.println("From:"  + inbox.getFrom());
                     System.out.println("To:"  + inbox.getTo());
                     System.out.println("Message:"  + inbox.getMessage());
-                    System.out.println("Attachment:"  + inbox.getattachment());
+                    System.out.println("Attachment:"  + inbox.getAttachment());
 
                 }
             }
