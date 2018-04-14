@@ -503,7 +503,7 @@ public class Client extends Application     // For GUI
             outputToServer.println("send_email");
             outputToServer.println(to);
             outputToServer.println(message);
-           // outputToServer.println(lblAttachment);
+            outputToServer.println(filename);
 
             try
             {
