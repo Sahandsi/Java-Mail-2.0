@@ -566,15 +566,9 @@ public class Client extends Application     // For GUI
 
     public void btnViewAttachment_click(TableView<Email> inboxTable)
     {
-        //UEmail attachment = inboxTable.getSelectionModel().getSelectedItem();
+
         String attachmentname = inboxTable.getSelectionModel().getSelectedItem().getAttachment();
-        System.out.println(attachmentname);
-
-        //https://stackoverflow.com/questions/20637865/javafx-2-2-get-selected-file-extension
-        // extension after the "."
-      //  String extension = attachmentname.indexOf(".") + 1;
-       // String ext2 = attachmentname.getExtension("bar.exe");
-
+        
         String extension = "";
 
         int i = attachmentname.lastIndexOf('.');
@@ -589,7 +583,6 @@ public class Client extends Application     // For GUI
             playSound(attachmentname);
         }
 
-
         if (extension.equals("wav"))
         {
             playSound(attachmentname);
@@ -602,10 +595,10 @@ public class Client extends Application     // For GUI
         {
             playVideo(attachmentname);
         }
-//        else if (extension.equals("txt"))
-//        {
-//            readTextFile(attachment);
-//        }
+        else if (extension.equals("txt"))
+        {
+            showText(attachmentname);
+        }
     }
 
 
@@ -657,9 +650,6 @@ public class Client extends Application     // For GUI
 
         String filename = attachmentname;
 
-
-        //file = new File("big_buck_bunny.flv");
-        //file = new File("Quicktime.mp4");
 
         file = new File(filename); //*** ONLY ONE THAT WORKS!!!
 
@@ -720,6 +710,62 @@ public class Client extends Application     // For GUI
 
 
 
+    public void showText(String attachmentname) {
+
+
+        Stage stage;
+        Scene scene;
+        stage = new Stage();
+
+
+        BorderPane border = new BorderPane();
+        HBox hbox = new HBox();
+        hbox.setPadding(new Insets(15, 12, 15, 12));
+        hbox.setSpacing(10);   // Gap between nodes
+        hbox.setStyle("-fx-background-color: #336699;");
+
+
+
+        TextArea textArea = new TextArea(); //making a TexrArea object
+
+
+
+        try {
+
+
+            Scanner input = new Scanner(attachmentname);
+
+            File file = new File(input.nextLine());
+
+            input = new Scanner(file);
+
+
+            while (input.hasNextLine()) {
+                String line = input.nextLine();
+                System.out.println(line);
+                textArea.appendText("\n" + input.nextLine());
+
+            }
+            input.close();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+
+        border.setTop(hbox);
+
+        textArea.setEditable(false);
+
+
+        border.setCenter(textArea);
+        scene = new Scene(border, 500, 500);
+
+        stage.setScene(scene);
+        stage.show();
+
+
+    }
 
 }
 
