@@ -8,26 +8,20 @@ public class Email implements Serializable
 
     private String from, to, message ;
     private String attachment;
-    private byte[] attachmentBytes;
-   // private String name;
+    private byte[] attachmentFile;
 
-
-    public Email(String from, String to, String message,byte[] attachmentBytes, String attachment)
+    public Email(String from, String to, String message,byte[] attachmentFile, String attachment)
 
     {
         this.from = from;
         this.to = to;
         this.message = message;
         this.attachment = attachment;
-        this.attachmentBytes = attachmentBytes;
-      //  this.name = name;
+        this.attachmentFile = attachmentFile;
 
     }
 
-//    public Attachment(byte[] attachmentBytes, String name)
-//    {
-//;
-//    }
+
 
     public String getFrom()
     {
@@ -49,14 +43,9 @@ public class Email implements Serializable
         return attachment;
     }
 
-//    public String getName()
-//    {
-//        return this.name;
-//    }
-
-    public byte[] getAttachmentBytes()
+    public byte[] getAttachmentFiles()
     {
-        return attachmentBytes;
+        return attachmentFile;
     }
 
 

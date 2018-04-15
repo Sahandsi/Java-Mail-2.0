@@ -243,25 +243,6 @@ String line =null;
                 System.out.println(attachmentName);
 
 
-//
-//                byte[] byteArray = new byte[(int) attachment.length()];
-//                try {
-//                    FileInputStream fileInputStream = new FileInputStream(attachment);
-//                    fileInputStream.read(byteArray);
-//                    for (int i = 0; i < byteArray.length; i++) {
-//                        System.out.print((char)byteArray[i]);
-//                        fileInputStream.close();
-//                    }
-//                } catch (FileNotFoundException e) {
-//                    System.out.println("File Not Found.");
-//                    e.printStackTrace();
-//                }
-//                catch (IOException e1) {
-//                    System.out.println("Error Reading The File.");
-//                    e1.printStackTrace();
-//                }
-
-
 
 
                 byte[] byteArray = null;
@@ -291,61 +272,6 @@ String line =null;
 
 
 
-
-
-
-
-
-//                byte[] byteArray = null;
-//
-//                try {
-//
-//                    FileInputStream mediaStream;
-//                    mediaStream = new FileInputStream(byteArray);
-//                    byteArray = (byte[]) attachment.readObject();
-////                    FileOutputStream mediaStream;
-//
-////                    mediaStream = new FileOutputStream("image.jpg");
-//
-//                    mediaStream.write(byteArray);
-//                    mediaStream.close();
-//                }
-//
-//                catch (ClassNotFoundException e)
-//                {
-//                    e.printStackTrace();
-//                }
-//                catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-
-
-
-//                byte[] byteArray = null;
-//
-//                // get the attachment
-//                ObjectInputStream inStream = null;
-//                try
-//                {
-//                    inStream = new ObjectInputStream(client.getInputStream());
-//                }
-//                catch (IOException e)
-//                {
-//                    e.printStackTrace();
-//                }
-//                try
-//                {
-//                    byteArray = (byte[])inStream.readObject();
-//                }
-//                catch (ClassNotFoundException e)
-//                {
-//                    e.printStackTrace();
-//                }
-//                catch (IOException e)
-//                {
-//                    e.printStackTrace();
-//                }
-
                 Email email = new Email(username, to, message, byteArray,attachmentName);
 
                 Server.RetrieveEmails().add(email);
@@ -356,7 +282,7 @@ String line =null;
                     System.out.println("To:"  + inbox.getTo());
                     System.out.println("Message:"  + inbox.getMessage());
                     System.out.println("Attachment Name:"  + inbox.getAttachment());
-                    System.out.println("Attachment:"  + inbox.getAttachmentBytes());
+                    System.out.println("Attachment:"  + inbox.getAttachmentFiles());
 
 
                 }

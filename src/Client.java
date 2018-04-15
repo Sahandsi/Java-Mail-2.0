@@ -5,6 +5,7 @@ import javafx.geometry.*;
 import javafx.scene.Scene;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -230,7 +231,7 @@ public class Client extends Application     // For GUI
         attachment.setCellValueFactory(new PropertyValueFactory<>("attachment"));
 
 
-        TableView<Email> inboxTable = new TableView<Email>();
+        TableView<Email> inboxTable = new TableView<>();
 
         inboxTable.getColumns().addAll(sentBy, message,attachment);          // Add columns of the sender and message
 
@@ -300,13 +301,13 @@ public class Client extends Application     // For GUI
     private void SelectedEmail(TableView<Email> inboxTable, Button buttonReply)
     {
         Email email = inboxTable.getSelectionModel().getSelectedItem();
-      //  buttonReply.setOnAction(e -> reply(email));
+        //buttonReply.setOnAction(e -> reply(email));
     }
 
     private void SeeEmail(TableView<Email> inboxTable)
     {
         Email email = inboxTable.getSelectionModel().getSelectedItem();
-        Cmail(email);
+        seeEmail(email,inboxTable);
     }
 
 //    private void reply(Email emailToReply)
@@ -334,7 +335,7 @@ public class Client extends Application     // For GUI
 //        textArea.setText("\n\n------------------------------\n"+"------------------------------\n\n"+emailToReply.getMessage());
 //        mailTo.setText(emailToReply.getFrom());
 //
-//        buttonSend.setOnAction(event -> sendEmail(mailTo.getText(), textArea.getText(),stage)) ;     // Sender column and data added to the mail class
+//        buttonSend.setOnAction(event -> sendEmail(mailTo.getText(), textArea.getText(),stage,attachmentName)) ;     // Sender column and data added to the mail class
 //
 //        mailTo.setPromptText("Recipient Mail Address");
 //        textArea.setPromptText("Enter text");
@@ -383,9 +384,11 @@ public class Client extends Application     // For GUI
 
     }
 
-    public void Cmail(Email Cmail)
+    public void seeEmail(Email seeEmail,TableView<Email> inboxTable)
     {
 
+
+        //TableView<Email> inboxTable = new TableView<>();
         Stage stage;
         Scene scene;
         stage = new Stage();
@@ -399,12 +402,15 @@ public class Client extends Application     // For GUI
         Button buttonClose = new Button("Close");
         buttonClose.setPrefSize(100, 20);
 
+        Button buttonViewAttachment = new Button("View Attachment");
+        buttonViewAttachment.setPrefSize(100, 20);
 
-        hbox.getChildren().addAll(buttonClose);
+
+        hbox.getChildren().addAll(buttonClose,buttonViewAttachment);
         border.setTop(hbox);
 
         TextArea textArea = new TextArea(); //making a TexrArea object
-        textArea.setText(Cmail.getMessage());
+        textArea.setText(seeEmail.getMessage());
 
         border.setCenter(textArea);
         scene = new Scene(border, 500, 500);
@@ -412,6 +418,7 @@ public class Client extends Application     // For GUI
         stage.setScene(scene);
         stage.show();
         buttonClose.setOnAction(e -> stageclose(stage));
+        buttonViewAttachment.setOnAction(e -> btnViewAttachment_click(inboxTable));
 
     }
 
@@ -424,14 +431,8 @@ public class Client extends Application     // For GUI
     {
 
         FileChooser fileChooser;
-        Label lblErrorMessage, lblAttachment;
-        Stage sendStage;
-        Button btnSendEmail, btnAttachment;
-       // Scene scene;
-        GridPane gridPane;
-        Label lblRecipient, lblmessage, lblSubject;
-        TextField txtRecipient, txtSubject;
-        TextArea txtMessage;
+        Label attachmentName;
+
 
         Stage stage;
         Scene scene;
@@ -448,7 +449,7 @@ public class Client extends Application     // For GUI
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
         // extension filters (only these 4 extensions can be selected)
         //attachment
-        lblAttachment = new Label("No Attached File");
+        attachmentName = new Label("No Attached File");
 
 
 
@@ -462,15 +463,15 @@ public class Client extends Application     // For GUI
         buttonAttach.setPrefSize(100, 20);
 
 
-        hbox.getChildren().addAll(mailTo,buttonSend,buttonAttach,lblAttachment);
+        hbox.getChildren().addAll(mailTo,buttonSend,buttonAttach,attachmentName);
 
         border.setTop(hbox);
         TextArea textArea = new TextArea();
 
 
         // event handler
-        buttonAttach.setOnAction(event ->btnAttachment_Click(event, fileChooser, stage, lblAttachment));
-        buttonSend.setOnAction(event -> sendEmail(mailTo.getText(), textArea.getText(),stage,lblAttachment)) ;
+        buttonAttach.setOnAction(event ->buttonAttach(event, fileChooser, stage, attachmentName));
+        buttonSend.setOnAction(event -> sendEmail(mailTo.getText(), textArea.getText(),stage,attachmentName)) ;
         mailTo.setPromptText("Recipient Mail Address");
         textArea.setPromptText("Enter text");
         border.setCenter(textArea);
@@ -550,17 +551,85 @@ public class Client extends Application     // For GUI
     //CAUTION
     // ASGHAR file FROM HERE ON
 
-
-    // gets the file from the user and sets the label to the attachment's name
-    private void btnAttachment_Click(ActionEvent event, FileChooser fileChooser, Stage stage, Label lblAttachment)
+    private void buttonAttach(ActionEvent event, FileChooser fileChooser, Stage stage, Label attachmentName)
     {
-        // check the server side of sendfile function. that will be done on the client side so it can be saved onto the server
         File file = fileChooser.showOpenDialog(stage);
         // check if file has been selected
         if (file != null)
         {
-            lblAttachment.setText(file.getName());
+            attachmentName.setText(file.getName());
         }
+    }
+
+    public void btnViewAttachment_click(TableView<Email> inboxTable)
+    {
+        //UEmail attachment = inboxTable.getSelectionModel().getSelectedItem();
+        String attachmentname = inboxTable.getSelectionModel().getSelectedItem().getAttachment();
+        System.out.println(attachmentname);
+
+        //https://stackoverflow.com/questions/20637865/javafx-2-2-get-selected-file-extension
+        // extension after the "."
+      //  String extension = attachmentname.indexOf(".") + 1;
+       // String ext2 = attachmentname.getExtension("bar.exe");
+
+        String extension = "";
+
+        int i = attachmentname.lastIndexOf('.');
+        if (i > 0) {
+            extension = attachmentname.substring(i+1);
+        }
+
+
+
+//        if (extension.equals("mp3"))
+//        {
+//            playSound(attachment);
+//        }
+         if (extension.equals("gif"))
+        {
+            displayImage(attachmentname);
+        }
+//        else if (extension.equals("flv"))
+//        {
+//            playVideo(attachment);
+//        }
+//        else if (extension.equals("txt"))
+//        {
+//            readTextFile(attachment);
+//        }
+    }
+
+
+
+    public void displayImage(String attachmentname)
+    {
+        String filename = attachmentname;
+        Stage primaryStage = new Stage();
+        Image image;
+        ImageView imageView;
+        StackPane pane;
+        Scene scene;
+        Button btnDownload;
+        HBox hBox = new HBox();
+
+
+        hBox.setPadding(new Insets(10,10,10, 10)); // pad the HBOX
+        hBox.setSpacing(10);
+        hBox.setAlignment(Pos.BOTTOM_CENTER);
+
+        image = new Image(new File(filename).toURI().toString());
+        imageView = new ImageView(image);
+        imageView.setFitWidth(500);
+        imageView.setFitHeight(350);
+        imageView.setPreserveRatio(true);
+        pane = new StackPane();
+        pane.getChildren().add(imageView);
+        pane.getChildren().add(hBox);
+
+        scene = new Scene(pane, 750, 600);
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Image");
+        primaryStage.show();
     }
 
 }
