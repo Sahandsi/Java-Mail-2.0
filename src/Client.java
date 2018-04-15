@@ -9,6 +9,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -581,18 +584,24 @@ public class Client extends Application     // For GUI
 
 
 
-//        if (extension.equals("mp3"))
-//        {
-//            playSound(attachment);
-//        }
+        if (extension.equals("mp3"))
+        {
+            playSound(attachmentname);
+        }
+
+
+        if (extension.equals("wav"))
+        {
+            playSound(attachmentname);
+        }
          if (extension.equals("gif"))
         {
             displayImage(attachmentname);
         }
-//        else if (extension.equals("flv"))
-//        {
-//            playVideo(attachment);
-//        }
+        else if (extension.equals("flv"))
+        {
+            playVideo(attachmentname);
+        }
 //        else if (extension.equals("txt"))
 //        {
 //            readTextFile(attachment);
@@ -600,37 +609,117 @@ public class Client extends Application     // For GUI
     }
 
 
-
+//
     public void displayImage(String attachmentname)
     {
         String filename = attachmentname;
         Stage primaryStage = new Stage();
         Image image;
-        ImageView imageView;
-        StackPane pane;
-        Scene scene;
-        Button btnDownload;
-        HBox hBox = new HBox();
 
-
-        hBox.setPadding(new Insets(10,10,10, 10)); // pad the HBOX
-        hBox.setSpacing(10);
-        hBox.setAlignment(Pos.BOTTOM_CENTER);
-
+//
         image = new Image(new File(filename).toURI().toString());
-        imageView = new ImageView(image);
+
+
+    ImageView imageView;
+    BorderPane pane;
+    Scene scene;
+
+
+    imageView = new ImageView(image);
         imageView.setFitWidth(500);
         imageView.setFitHeight(350);
         imageView.setPreserveRatio(true);
-        pane = new StackPane();
-        pane.getChildren().add(imageView);
-        pane.getChildren().add(hBox);
+    pane = new BorderPane();
+        pane.setCenter(imageView);
 
-        scene = new Scene(pane, 750, 600);
+    // Add the layout pane to a scene
+    scene = new Scene(pane);
+
+    // Add the scene to the stage, set the title
+    // and show the stage
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Image");
+        primaryStage.setTitle("Image Demo");
+        primaryStage.show();
+}
+//    }
+
+
+    public void playVideo(String attachmentname)
+    {
+        File file;
+        Media video;
+        MediaPlayer player;
+        MediaView viewer;
+        StackPane pane;
+        Scene scene;
+        Stage primaryStage = new Stage();
+
+
+        String filename = attachmentname;
+
+
+        //file = new File("big_buck_bunny.flv");
+        //file = new File("Quicktime.mp4");
+
+        file = new File(filename); //*** ONLY ONE THAT WORKS!!!
+
+        video = new Media(file.toURI().toString());
+        player = new MediaPlayer(video);
+        player.setAutoPlay(true);
+
+        viewer = new MediaView(player);
+        viewer.setFitWidth(700);
+        viewer.setFitHeight(300);
+        viewer.setPreserveRatio(true);
+
+        pane = new StackPane(viewer);
+
+        // Add the layout pane to a scene
+        scene = new Scene(pane);
+
+        // Add the scene to the stage, set the title
+        // and show the stage
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Video Demo");
         primaryStage.show();
     }
+
+    public void playSound(String attachmentname)
+    {
+
+        Stage primaryStage = new Stage();
+
+        Button button;
+        BorderPane pane;
+        Scene scene;
+
+
+
+        button = new Button("Play sound");
+//        button.setOnAction(event -> playSound());
+        pane = new BorderPane();
+        pane.setCenter(button);
+        // Add the layout pane to a scene
+        scene = new Scene(pane);
+
+
+        File file;
+        Media sound;
+        MediaPlayer player;
+
+        file = new File(attachmentname);
+        sound = new Media(file.toURI().toString());
+        player = new MediaPlayer(sound);
+        player.setAutoPlay(true);
+
+
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Sound Demo");
+        primaryStage.show();
+    }
+
+
+
 
 }
 
