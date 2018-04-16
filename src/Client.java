@@ -762,7 +762,7 @@ public class Client extends Application     // For GUI
 
         vbox1.getChildren().addAll(vbox2,vbox3,vbox4);
 
-        hbox.getChildren().addAll(startBtn, pauseBtn, stopBtn);
+        hbox.getChildren().addAll(pauseBtn,startBtn, stopBtn);
         hbox.setAlignment(Pos.BOTTOM_CENTER);
 
        // hbox.maxHeight(100);
