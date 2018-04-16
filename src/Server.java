@@ -229,7 +229,6 @@ class ClientHandler extends Thread implements Serializable
     {
 
 
-String line =null;
         String request = input.nextLine();
 
         while(!request.equals("close")) {
@@ -371,8 +370,6 @@ String line =null;
                         e.printStackTrace();
                     }
 
-                    //Email email = new Email(username, to, message, byteArray,attachmentName);
-                    //Server.RetrieveEmails().add(email);
 
                 }
 

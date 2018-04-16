@@ -523,6 +523,7 @@ public class Client extends Application     // For GUI
     public void sendEmail(String to, String message,Stage stage,Label attachmentname)
     {
 
+        stage.close();
 
         FileInputStream fileIn;
         int intFileLen;
@@ -562,6 +563,7 @@ public class Client extends Application     // For GUI
                         objectOutput.writeObject(byteArray);
                         objectOutput.flush(); // flush the stream
                         System.out.println(byteArray);
+
                     }
                     catch (IOException e)
                     {
@@ -573,11 +575,11 @@ public class Client extends Application     // For GUI
                     e.printStackTrace();
                 }
             }
+            System.out.println("hahay");
             return;
 
-        }
 
-        stage.close();                        // Close the page after this check how to do this online
+        }
 
     }
 
