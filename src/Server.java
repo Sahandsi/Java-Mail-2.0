@@ -253,13 +253,14 @@ class ClientHandler extends Thread implements Serializable
                         int userID = resultSet.getInt("EmailID");
                         String usernameTo = resultSet.getString("usernameTo");
                         String usernameFrom = resultSet.getString("usernameFrom");
+                        String emailSubject = resultSet.getString("emailSubject");
                         String message = resultSet.getString("message");
                         byte[] attachmentFile = resultSet.getBytes("attachmentFile");
                         String attachment = resultSet.getString("attachment");
                         System.out.println("user id: " + userID) ;
 
 
-                        Server.RetrieveEmails().add(new Email(userID, usernameFrom, usernameTo, message, attachmentFile, attachment));
+                        Server.RetrieveEmails().add(new Email(userID, usernameFrom, usernameTo,emailSubject ,message, attachmentFile, attachment));
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -304,6 +305,7 @@ class ClientHandler extends Thread implements Serializable
 
 
                 String to = input.nextLine();
+                String emailSubject =input.nextLine();
                 String message = input.nextLine();
                 String attachmentName =input.nextLine();
                 System.out.println(attachmentName);
@@ -322,8 +324,8 @@ class ClientHandler extends Thread implements Serializable
                     // MAKE THIS PREPARED
                     try {
                         Statement statement = conn.createStatement();
-                        String insertStatement = "INSERT INTO EMAIL (usernameTo, usernameFrom, message, attachmentFile, attachment)" +
-                                "VALUES (" + "'" + to + "'" + "," + "'" +username + "'" + "," + "'" + message + "'" + "," + " null, null )";
+                        String insertStatement = "INSERT INTO EMAIL (usernameTo, usernameFrom, emailSubject,message, attachmentFile, attachment)" +
+                                "VALUES (" + "'" + to + "'" + "," + "'" +username + "'" + "," + "'"+ emailSubject +"'" + "," + "'" + message + "'" + "," + " null, null )";
                         System.out.println(insertStatement);
                         statement.executeUpdate(insertStatement);
 
@@ -360,8 +362,8 @@ class ClientHandler extends Thread implements Serializable
                     Connection conn = Server.getConnection();
                     try {
                         Statement statement = conn.createStatement();
-                        String insertStatement = "INSERT INTO EMAIL (usernameTo, usernameFrom, message, attachmentFile, attachment)" +
-                                "VALUES (" + "'" + to + "'" + "," + "'" +username + "'" + "," + "'" + message + "'" + "," + "'" + byteAttachment + "'"
+                        String insertStatement = "INSERT INTO EMAIL (usernameTo, usernameFrom, emailSubject,message, attachmentFile, attachment)" +
+                                "VALUES (" + "'" + to + "'" + "," + "'" +username +"'" + "," + "'"+emailSubject + "'" + "," + "'" + message + "'" + "," + "'" + byteAttachment + "'"
                                 + ", " + "'" + attachmentName + "'" + ")";
                         System.out.println(insertStatement);
                         statement.executeUpdate(insertStatement);
@@ -371,6 +373,7 @@ class ClientHandler extends Thread implements Serializable
                     }
 
 
+                    System.out.println("hahay");
                 }
 
 
@@ -378,6 +381,7 @@ class ClientHandler extends Thread implements Serializable
                 {
                     System.out.println("From:"  + inbox.getFrom());
                     System.out.println("To:"  + inbox.getTo());
+                    System.out.println("Subject:"  + inbox.getemailSubject());
                     System.out.println("Message:"  + inbox.getMessage());
                     System.out.println("Attachment Name:"  + inbox.getAttachment());
                     System.out.println("Attachment:"  + inbox.getAttachmentFiles());

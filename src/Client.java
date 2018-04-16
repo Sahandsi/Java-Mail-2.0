@@ -237,6 +237,10 @@ public class Client extends Application     // For GUI
         sentBy.setPrefWidth(250);
         sentBy.setCellValueFactory(new PropertyValueFactory<>("from"));
 
+        TableColumn<Email, String> emailSubject = new TableColumn<>("emailSubject");
+        emailSubject.setPrefWidth(250);
+        emailSubject.setCellValueFactory(new PropertyValueFactory<>("emailSubject"));
+
 
         TableColumn<Email, String> message = new TableColumn<>("Message");
         message.setPrefWidth(250);
@@ -249,7 +253,7 @@ public class Client extends Application     // For GUI
 
         TableView<Email> inboxTable = new TableView<>();
 
-        inboxTable.getColumns().addAll(sentBy, message,attachment);          // Add columns of the sender and message
+        inboxTable.getColumns().addAll(sentBy, emailSubject,message,attachment);          // Add columns of the sender and message
 
 
         Button buttonCompose = new Button("Compose");
@@ -354,6 +358,8 @@ public class Client extends Application     // For GUI
 
 
         TextField mailTo = new TextField();
+        TextField mailSubject = new TextField();
+
         Button buttonSend = new Button("Send");
 
         buttonSend.setPrefSize(100, 20);
@@ -361,7 +367,7 @@ public class Client extends Application     // For GUI
 
 
 
-        hbox.getChildren().addAll(mailTo,buttonSend,attachmentName);
+        hbox.getChildren().addAll(mailTo,mailSubject,buttonSend,attachmentName);
 
         border.setTop(hbox);
         TextArea textArea = new TextArea();
@@ -374,7 +380,7 @@ public class Client extends Application     // For GUI
 
         // event handler
         //buttonAttach.setOnAction(event ->buttonAttach(event, fileChooser, stage, attachmentName));
-        buttonSend.setOnAction(event -> sendEmail(mailTo.getText(), textArea.getText(),stage,attachmentName)) ;     // Sender column and data added to the mail class
+        buttonSend.setOnAction(event -> sendEmail(mailTo.getText(), mailSubject.getText(),textArea.getText(),stage,attachmentName)) ;     // Sender column and data added to the mail class
 
 
 
@@ -432,6 +438,7 @@ public class Client extends Application     // For GUI
         Stage stage;
         Scene scene;
         stage = new Stage();
+
 
         BorderPane border = new BorderPane();
         HBox hbox = new HBox();
@@ -493,6 +500,8 @@ public class Client extends Application     // For GUI
         System.out.println(System.getProperty("user.dir"));
 
         TextField mailTo = new TextField();
+        TextField mailSubject = new TextField();
+
         Button buttonSend = new Button("Send");
 
         buttonSend.setPrefSize(100, 20);
@@ -502,7 +511,7 @@ public class Client extends Application     // For GUI
         buttonAttach.setPrefSize(100, 20);
 
 
-        hbox.getChildren().addAll(mailTo,buttonSend,buttonAttach,attachmentName);
+        hbox.getChildren().addAll(mailTo,mailSubject,buttonSend,buttonAttach,attachmentName);
 
         border.setTop(hbox);
         TextArea textArea = new TextArea();
@@ -510,7 +519,7 @@ public class Client extends Application     // For GUI
 
         // event handler
         buttonAttach.setOnAction(event ->buttonAttach(event, fileChooser, stage, attachmentName));
-        buttonSend.setOnAction(event -> sendEmail(mailTo.getText(), textArea.getText(),stage, attachmentName));
+        buttonSend.setOnAction(event -> sendEmail(mailTo.getText(), mailSubject.getText(),textArea.getText(),stage, attachmentName));
         mailTo.setPromptText("Recipient Mail Address");
         textArea.setPromptText("Enter text");
         border.setCenter(textArea);
@@ -522,7 +531,7 @@ public class Client extends Application     // For GUI
 
     }
 
-    public void sendEmail(String to, String message,Stage stage,Label attachmentname)
+    public void sendEmail(String to, String mailSubject,String message,Stage stage,Label attachmentname)
     {
 
         stage.close();
@@ -542,6 +551,7 @@ public class Client extends Application     // For GUI
         {
             outputToServer.println("send_email");
             outputToServer.println(to);
+            outputToServer.println(mailSubject);
             outputToServer.println(message);
             outputToServer.println(filename);
             String serverRequest = inputFromServer.nextLine();
@@ -556,7 +566,6 @@ public class Client extends Application     // For GUI
                     // read in the byte array
                     try
                     {
-
                         fileIn.read(byteArray);
                         fileIn.close();
 
@@ -615,8 +624,6 @@ public class Client extends Application     // For GUI
             extension = attachmentname.substring(i+1);
         }
 
-
-
         if (extension.equals("mp3"))
         {
             playSound(attachmentname);
@@ -672,40 +679,40 @@ public class Client extends Application     // For GUI
 
 
 
-    public void playVideo(String attachmentname)
-    {
-        File file;
-        Media video;
-        MediaPlayer player;
-        MediaView viewer;
-        StackPane pane;
-        Scene scene;
-        Stage primaryStage = new Stage();
-
-
-        String filename = attachmentname;
-
-
-        file = new File(filename); //*** ONLY ONE THAT WORKS!!!
-
-        video = new Media(file.toURI().toString());
-        player = new MediaPlayer(video);
-        player.setAutoPlay(true);
-
-        viewer = new MediaView(player);
-        viewer.setFitWidth(700);
-        viewer.setFitHeight(300);
-        viewer.setPreserveRatio(true);
-
-        pane = new StackPane(viewer);
-
-        scene = new Scene(pane);
-
-
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("Video Demo");
-        primaryStage.show();
-    }
+//    public void playVideo(String attachmentname)
+//    {
+//        File file;
+//        Media video;
+//        MediaPlayer player;
+//        MediaView viewer;
+//        StackPane pane;
+//        Scene scene;
+//        Stage primaryStage = new Stage();
+//
+//
+//        String filename = attachmentname;
+//
+//
+//        file = new File(filename); //*** ONLY ONE THAT WORKS!!!
+//
+//        video = new Media(file.toURI().toString());
+//        player = new MediaPlayer(video);
+//        player.setAutoPlay(true);
+//
+//        viewer = new MediaView(player);
+//        viewer.setFitWidth(700);
+//        viewer.setFitHeight(300);
+//        viewer.setPreserveRatio(true);
+//
+//        pane = new StackPane(viewer);
+//
+//        scene = new Scene(pane);
+//
+//
+//        primaryStage.setScene(scene);
+//        primaryStage.setTitle("Video Demo");
+//        primaryStage.show();
+//    }
 
 
 
