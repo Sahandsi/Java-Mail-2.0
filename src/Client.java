@@ -822,13 +822,12 @@ public class Client extends Application     // For GUI
         vbox3.getChildren().add(slider);
 
         vbox2.setPadding(new Insets(10, 0, 0, 0));
+        vbox4.setStyle("-fx-background-color: #336699;");
+
 
 
 
         BorderPane root = new BorderPane(vbox3, vbox2, null, vbox4, null);
-
-
-
 
 
 
@@ -858,6 +857,10 @@ public class Client extends Application     // For GUI
         primaryStage.show();
 
         player.play();
+
+        primaryStage.setOnCloseRequest((ae) ->player.pause());
+
+
     }
 
 
