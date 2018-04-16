@@ -1,5 +1,4 @@
 import javafx.application.Application;
-import javafx.beans.InvalidationListener;
 import javafx.collections.*;
 import javafx.event.ActionEvent;
 import javafx.geometry.*;
@@ -18,17 +17,20 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
 import javafx.util.Duration;
-
 import java.io.*;
 import java.net.*;
 import java.sql.*;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 
 public class Client extends Application     // For GUI
 {
+
+    File file;
+    Media sound;
+    MediaPlayer player;
+
 
     private PrintWriter outputToServer;     // Send message to server
     private Scanner inputFromServer;        // Gets response back from the server
@@ -346,23 +348,20 @@ public class Client extends Application     // For GUI
 
         fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
-        // extension filters (only these 4 extensions can be selected)
-        //attachment
+
         attachmentName = new Label("Attachment: Empty");
 
-        System.out.println(System.getProperty("user.dir"));
+
 
         TextField mailTo = new TextField();
         Button buttonSend = new Button("Send");
 
         buttonSend.setPrefSize(100, 20);
 
-        Button buttonAttach = new Button("Attach");
-
-        buttonAttach.setPrefSize(100, 20);
 
 
-        hbox.getChildren().addAll(mailTo,buttonSend,buttonAttach,attachmentName);
+
+        hbox.getChildren().addAll(mailTo,buttonSend,attachmentName);
 
         border.setTop(hbox);
         TextArea textArea = new TextArea();
@@ -374,7 +373,7 @@ public class Client extends Application     // For GUI
 
 
         // event handler
-        buttonAttach.setOnAction(event ->buttonAttach(event, fileChooser, stage, attachmentName));
+        //buttonAttach.setOnAction(event ->buttonAttach(event, fileChooser, stage, attachmentName));
         buttonSend.setOnAction(event -> sendEmail(mailTo.getText(), textArea.getText(),stage,attachmentName)) ;     // Sender column and data added to the mail class
 
 
@@ -430,7 +429,6 @@ public class Client extends Application     // For GUI
     {
 
 
-        //TableView<Email> inboxTable = new TableView<>();
         Stage stage;
         Scene scene;
         stage = new Stage();
@@ -489,8 +487,7 @@ public class Client extends Application     // For GUI
 
         fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
-        // extension filters (only these 4 extensions can be selected)
-        //attachment
+
         attachmentName = new Label("Attachment: Empty");
 
         System.out.println(System.getProperty("user.dir"));
@@ -635,7 +632,7 @@ public class Client extends Application     // For GUI
         }
         else if (extension.equals("flv"))
         {
-            playVideo(attachmentname);
+            playSound(attachmentname);
         }
         else if (extension.equals("txt"))
         {
@@ -644,14 +641,12 @@ public class Client extends Application     // For GUI
     }
 
 
-//
     public void displayImage(String attachmentname)
     {
         String filename = attachmentname;
         Stage primaryStage = new Stage();
         Image image;
 
-//
         image = new Image(new File(filename).toURI().toString());
 
 
@@ -667,16 +662,14 @@ public class Client extends Application     // For GUI
     pane = new BorderPane();
         pane.setCenter(imageView);
 
-    // Add the layout pane to a scene
     scene = new Scene(pane);
 
-    // Add the scene to the stage, set the title
-    // and show the stage
+
         primaryStage.setScene(scene);
         primaryStage.setTitle("Image Demo");
         primaryStage.show();
 }
-//    }
+
 
 
     public void playVideo(String attachmentname)
@@ -706,11 +699,9 @@ public class Client extends Application     // For GUI
 
         pane = new StackPane(viewer);
 
-        // Add the layout pane to a scene
         scene = new Scene(pane);
 
-        // Add the scene to the stage, set the title
-        // and show the stage
+
         primaryStage.setScene(scene);
         primaryStage.setTitle("Video Demo");
         primaryStage.show();
@@ -721,13 +712,83 @@ public class Client extends Application     // For GUI
 
     public void playSound(String attachmentname)
     {
-        
+
+//        Button roundButton = new Button();
+//
+//        roundButton.setStyle(
+//                "-fx-background-radius: 5em; " +
+//                        "-fx-min-width: 30px; " +
+//                        "-fx-min-height: 30px; " +
+//                        "-fx-max-width: 30px; " +
+//                        "-fx-max-height: 30px;"
+//        );
+
+
+        MediaView viewer;
+
+        Button startBtn;
+        Button pauseBtn;
+        Button stopBtn;
 
         Stage primaryStage = new Stage();
 
-        File file;
-        Media sound;
-        MediaPlayer player;
+        //File file;
+       // Media sound;
+        //MediaPlayer player;
+
+
+
+        HBox hbox;
+
+        BorderPane pane;
+
+
+
+        startBtn = new Button("Start");
+        startBtn.setOnAction(event -> resumeSound());
+        pauseBtn = new Button("Pause");
+        pauseBtn.setOnAction(event->pauseSound());
+        stopBtn = new Button("Stop");
+        stopBtn.setOnAction(event->stopSound());
+        hbox = new HBox();
+        hbox.getChildren().addAll(startBtn, pauseBtn, stopBtn);
+        hbox.maxHeight(100);
+        hbox.setMaxWidth(150);
+        pane = new BorderPane();
+        pane.setBottom(hbox);
+        BorderPane.setAlignment(hbox, Pos.BOTTOM_CENTER);
+
+        hbox.setPadding(new Insets(10, 50, 50, 50));
+        hbox.setSpacing(10);
+
+        viewer = new MediaView(player);
+//        viewer.setFitWidth(700);
+//        viewer.setFitHeight(300);
+        viewer.setPreserveRatio(true);
+
+                startBtn.setStyle(
+                "-fx-background-radius: 5em; " +
+                        "-fx-min-width: 60px; " +
+                        "-fx-min-height: 60px; " +
+                        "-fx-max-width: 60px; " +
+                        "-fx-max-height: 60px;"
+        );
+                pauseBtn.setStyle(
+                "-fx-background-radius: 5em; " +
+                        "-fx-min-width: 60px; " +
+                        "-fx-min-height: 60px; " +
+                        "-fx-max-width: 60px; " +
+                        "-fx-max-height: 60px;"
+        );
+                stopBtn.setStyle(
+                "-fx-background-radius: 5em; " +
+                        "-fx-min-width: 60px; " +
+                        "-fx-min-height: 60px; " +
+                        "-fx-max-width: 60px; " +
+                        "-fx-max-height: 60px;"
+        );
+
+
 
 
 
@@ -742,7 +803,7 @@ public class Client extends Application     // For GUI
         Slider slider = new Slider();
         player.totalDurationProperty().addListener((obs, oldDuration, newDuration) -> slider.setMax(newDuration.toSeconds()));
 
-        BorderPane root = new BorderPane(mediaView, null, null, slider, null);
+        BorderPane root = new BorderPane(mediaView, hbox, pane, slider, viewer);
 
         slider.valueChangingProperty().addListener((obs, wasChanging, isChanging) -> {
             if (! isChanging) {
@@ -773,6 +834,21 @@ public class Client extends Application     // For GUI
     }
 
 
+
+    public void resumeSound()
+    {
+        player.play();
+    }
+
+    public void pauseSound()
+    {
+        player.pause();
+    }
+
+    public void stopSound()
+    {
+        player.stop();
+    }
 
     public void showText(String attachmentname) {
 
