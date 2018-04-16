@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.beans.InvalidationListener;
 import javafx.collections.*;
 import javafx.event.ActionEvent;
 import javafx.geometry.*;
@@ -16,10 +17,14 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
+import javafx.util.Duration;
+
 import java.io.*;
 import java.net.*;
 import java.sql.*;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class Client extends Application     // For GUI
@@ -711,38 +716,60 @@ public class Client extends Application     // For GUI
         primaryStage.show();
     }
 
+
+
+
     public void playSound(String attachmentname)
     {
+        
 
         Stage primaryStage = new Stage();
-
-        Button button;
-        BorderPane pane;
-        Scene scene;
-
-
-
-        button = new Button("Play sound");
-//        button.setOnAction(event -> playSound());
-        pane = new BorderPane();
-        pane.setCenter(button);
-        // Add the layout pane to a scene
-        scene = new Scene(pane);
-
 
         File file;
         Media sound;
         MediaPlayer player;
 
+
+
         file = new File(attachmentname);
         sound = new Media(file.toURI().toString());
-        player = new MediaPlayer(sound);
-        player.setAutoPlay(true);
 
+        double MIN_CHANGE = 0.5 ;
 
+                player = new MediaPlayer(sound);
+        MediaView mediaView = new MediaView(player);
+
+        Slider slider = new Slider();
+        player.totalDurationProperty().addListener((obs, oldDuration, newDuration) -> slider.setMax(newDuration.toSeconds()));
+
+        BorderPane root = new BorderPane(mediaView, null, null, slider, null);
+
+        slider.valueChangingProperty().addListener((obs, wasChanging, isChanging) -> {
+            if (! isChanging) {
+                player.seek(Duration.seconds(slider.getValue()));
+            }
+        });
+
+        slider.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (! slider.isValueChanging()) {
+                double currentTime = player.getCurrentTime().toSeconds();
+                if (Math.abs(currentTime - newValue.doubleValue()) > MIN_CHANGE) {
+                    player.seek(Duration.seconds(newValue.doubleValue()));
+                }
+            }
+        });
+
+        player.currentTimeProperty().addListener((obs, oldTime, newTime) -> {
+            if (! slider.isValueChanging()) {
+                slider.setValue(newTime.toSeconds());
+            }
+        });
+
+        Scene scene = new Scene(root, 540, 280);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Sound Demo");
         primaryStage.show();
+
+        player.play();
     }
 
 
