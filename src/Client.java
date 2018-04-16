@@ -140,6 +140,7 @@ public class Client extends Application     // For GUI
             Connection con = getConnection();
             PreparedStatement posted = con.prepareStatement("INSERT INTO Users (Name) VALUES ('"+t+"')");
             posted.executeUpdate();
+           // outputToServer.println(t);
             message.setText("Register Complete!");
 
         }
@@ -219,6 +220,11 @@ public class Client extends Application     // For GUI
         hbox.setSpacing(30);   // Gap between nodes
         hbox.setStyle("-fx-background-color: #336699;");
 
+        TableColumn<Email, String> ID = new TableColumn<>("USERID");
+        ID.setPrefWidth(250);
+        ID.setCellValueFactory(new PropertyValueFactory<>("userID"));
+        ID.setVisible(false);
+
 
         TableColumn<Email, String> sentBy = new TableColumn<>("Sent By");
         sentBy.setPrefWidth(250);
@@ -249,10 +255,11 @@ public class Client extends Application     // For GUI
 
         Button buttonDelete = new Button("Delete");
         buttonDelete.setOnAction(e -> { Email selectedItem = inboxTable.getSelectionModel().getSelectedItem();
-            int index = inboxTable.getSelectionModel().selectedIndexProperty().get();
-            inboxTable.getItems().remove(selectedItem);
+            int index = selectedItem.getUserID();
+            System.out.println(index);
             outputToServer.println("delete_mail");
             outputToServer.println(index);
+            inboxTable.getItems().remove(selectedItem);
         });
 
         buttonDelete.setPrefSize(100, 20);
@@ -304,7 +311,7 @@ public class Client extends Application     // For GUI
     private void SelectedEmail(TableView<Email> inboxTable, Button buttonReply)
     {
         Email email = inboxTable.getSelectionModel().getSelectedItem();
-        //buttonReply.setOnAction(e -> reply(email));
+        buttonReply.setOnAction(e -> reply(email));
     }
 
     private void SeeEmail(TableView<Email> inboxTable)
@@ -313,42 +320,69 @@ public class Client extends Application     // For GUI
         seeEmail(email,inboxTable);
     }
 
-//    private void reply(Email emailToReply)
-//    {
-//        Stage stage;
-//        Scene scene;
-//        stage = new Stage();
-//
-//        BorderPane border = new BorderPane();
-//        HBox hbox = new HBox();
-//        hbox.setPadding(new Insets(15, 12, 15, 12));
-//        hbox.setSpacing(10);   // Gap between nodes
-//        hbox.setStyle("-fx-background-color: #336699;");
-//
-//        TextField mailTo = new TextField();
-//        Button buttonSend = new Button("Send");
-//        buttonSend.setPrefSize(100, 20);
-//
-//
-//        hbox.getChildren().addAll(mailTo,buttonSend);
-//        border.setTop(hbox);
-//        TextArea textArea = new TextArea(); //making a TexrArea object
-//
-//
-//        textArea.setText("\n\n------------------------------\n"+"------------------------------\n\n"+emailToReply.getMessage());
-//        mailTo.setText(emailToReply.getFrom());
-//
-//        buttonSend.setOnAction(event -> sendEmail(mailTo.getText(), textArea.getText(),stage,attachmentName)) ;     // Sender column and data added to the mail class
-//
-//        mailTo.setPromptText("Recipient Mail Address");
-//        textArea.setPromptText("Enter text");
-//        border.setCenter(textArea);
-//        scene = new Scene(border, 800, 500);
-//
-//        stage.setScene(scene);
-//        stage.show();
-//
-//    }
+    private void reply(Email emailToReply)
+    {
+
+
+        FileChooser fileChooser;
+        Label attachmentName;
+        File file = null;
+
+        Stage stage;
+        Scene scene;
+        stage = new Stage();
+
+        BorderPane border = new BorderPane();
+        HBox hbox = new HBox();
+        hbox.setPadding(new Insets(15, 12, 15, 12));
+        hbox.setSpacing(10);   // Gap between nodes
+        hbox.setStyle("-fx-background-color: #336699;");
+
+
+        fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+        // extension filters (only these 4 extensions can be selected)
+        //attachment
+        attachmentName = new Label("Attachment: Empty");
+
+        System.out.println(System.getProperty("user.dir"));
+
+        TextField mailTo = new TextField();
+        Button buttonSend = new Button("Send");
+
+        buttonSend.setPrefSize(100, 20);
+
+        Button buttonAttach = new Button("Attach");
+
+        buttonAttach.setPrefSize(100, 20);
+
+
+        hbox.getChildren().addAll(mailTo,buttonSend,buttonAttach,attachmentName);
+
+        border.setTop(hbox);
+        TextArea textArea = new TextArea();
+
+
+        textArea.setText("\n\n------------------------------\n"+"------------------------------\n\n"+emailToReply.getMessage());
+        mailTo.setText(emailToReply.getFrom());
+
+
+
+        // event handler
+        buttonAttach.setOnAction(event ->buttonAttach(event, fileChooser, stage, attachmentName));
+        buttonSend.setOnAction(event -> sendEmail(mailTo.getText(), textArea.getText(),stage,attachmentName)) ;     // Sender column and data added to the mail class
+
+
+
+        mailTo.setPromptText("Recipient Mail Address");
+        textArea.setPromptText("Enter text");
+        border.setCenter(textArea);
+        scene = new Scene(border, 800, 500);
+
+        stage.setScene(scene);
+        stage.show();
+
+    }
 
 
     private void refreshMail(TableView<Email> inboxTable)
@@ -435,7 +469,7 @@ public class Client extends Application     // For GUI
 
         FileChooser fileChooser;
         Label attachmentName;
-
+        File file = null;
 
         Stage stage;
         Scene scene;
@@ -452,9 +486,9 @@ public class Client extends Application     // For GUI
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
         // extension filters (only these 4 extensions can be selected)
         //attachment
-        attachmentName = new Label("No Attached File");
+        attachmentName = new Label("Attachment: Empty");
 
-
+        System.out.println(System.getProperty("user.dir"));
 
         TextField mailTo = new TextField();
         Button buttonSend = new Button("Send");
@@ -474,7 +508,7 @@ public class Client extends Application     // For GUI
 
         // event handler
         buttonAttach.setOnAction(event ->buttonAttach(event, fileChooser, stage, attachmentName));
-        buttonSend.setOnAction(event -> sendEmail(mailTo.getText(), textArea.getText(),stage,attachmentName)) ;
+        buttonSend.setOnAction(event -> sendEmail(mailTo.getText(), textArea.getText(),stage, attachmentName));
         mailTo.setPromptText("Recipient Mail Address");
         textArea.setPromptText("Enter text");
         border.setCenter(textArea);
@@ -486,17 +520,16 @@ public class Client extends Application     // For GUI
 
     }
 
-    public void sendEmail(String to, String message,Stage stage,Label lblAttachment)
+    public void sendEmail(String to, String message,Stage stage,Label attachmentname)
     {
 
 
         FileInputStream fileIn;
         int intFileLen;
         byte[] byteArray = null;
+        String filename = attachmentname.getText();
 
-        String filename = lblAttachment.getText();
-
-        System.out.println(lblAttachment);
+        System.out.println(attachmentname);
 
         if (to.isEmpty() || message.isEmpty()) // Check if the parameters are empty
         {
@@ -508,37 +541,41 @@ public class Client extends Application     // For GUI
             outputToServer.println(to);
             outputToServer.println(message);
             outputToServer.println(filename);
-
-            try
+            String serverRequest = inputFromServer.nextLine();
+            if (serverRequest.equals("attachment"))
             {
-                fileIn = new FileInputStream(filename); // set up input stream
-                intFileLen = (int)(new File(filename)).length(); // cast the file length to an int
-                byteArray = new byte[intFileLen];
-
-                // read in the byte array
                 try
                 {
+                    fileIn = new FileInputStream(filename); // set up input stream
+                    intFileLen = (int)(new File(filename)).length(); // cast the file length to an int
+                    byteArray = new byte[intFileLen];
 
-                    fileIn.read(byteArray);
-                    fileIn.close();
+                    // read in the byte array
+                    try
+                    {
 
-                    // send the attachment as well to the server
-                    ObjectOutputStream objectOutput = new ObjectOutputStream(socket.getOutputStream());
-                    objectOutput.writeObject(byteArray);
-                    objectOutput.flush(); // flush the stream
-                    System.out.println(byteArray);
+                        fileIn.read(byteArray);
+                        fileIn.close();
+
+                        // send the attachment as well to the server
+                        ObjectOutputStream objectOutput = new ObjectOutputStream(socket.getOutputStream());
+                        objectOutput.writeObject(byteArray);
+                        objectOutput.flush(); // flush the stream
+                        System.out.println(byteArray);
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
                 }
-                catch (IOException e)
+                catch (FileNotFoundException e)
                 {
                     e.printStackTrace();
                 }
             }
-            catch (FileNotFoundException e)
-            {
-                e.printStackTrace();
-            }
-        }
+            return;
 
+        }
 
         stage.close();                        // Close the page after this check how to do this online
 
@@ -550,12 +587,10 @@ public class Client extends Application     // For GUI
         System.exit(0);
     }
 
-    ////////////////////////////////////////////////////////////////////////
-    //CAUTION
-    // ASGHAR file FROM HERE ON
 
     private void buttonAttach(ActionEvent event, FileChooser fileChooser, Stage stage, Label attachmentName)
     {
+
         File file = fileChooser.showOpenDialog(stage);
         // check if file has been selected
         if (file != null)
@@ -568,7 +603,7 @@ public class Client extends Application     // For GUI
     {
 
         String attachmentname = inboxTable.getSelectionModel().getSelectedItem().getAttachment();
-        
+
         String extension = "";
 
         int i = attachmentname.lastIndexOf('.');

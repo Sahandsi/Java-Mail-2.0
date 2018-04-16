@@ -9,10 +9,12 @@ public class Email implements Serializable
     private String from, to, message ;
     private String attachment;
     private byte[] attachmentFile;
+    private int userID;
 
-    public Email(String from, String to, String message,byte[] attachmentFile, String attachment)
+    public Email(int userID, String from, String to, String message,byte[] attachmentFile, String attachment)
 
     {
+        this.userID= userID;
         this.from = from;
         this.to = to;
         this.message = message;
@@ -47,6 +49,8 @@ public class Email implements Serializable
     {
         return attachmentFile;
     }
+
+    public int getUserID() { return userID; }
 
 
 

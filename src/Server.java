@@ -13,20 +13,17 @@ public class Server implements Serializable
     private static ArrayList<String> messages = new ArrayList<String>();     // List of emails array(list)
 
 
-    private static Connection getConnection()
+    private static void getUsers()
     {
         try{
-            Connection link = null;
+
+
+
             Statement statement = null;
-            ResultSet results = null;
-            String driver = "com.mysql.jdbc.Driver";
-            String url = "jdbc:mysql://localhost:8889/Java";
-            String username = "root";
-            String password = "root";
 
-            Class.forName(driver);
+            //Class.forName(driver);
 
-            Connection conn = DriverManager.getConnection(url, username, password);
+            Connection conn = getConnection();
             System.out.println("Connected");
             statement = conn.createStatement();
             String sql = "SELECT Name from Users";
@@ -35,12 +32,9 @@ public class Server implements Serializable
             while (rs.next())
             {
 
-
                 String names = rs.getString("Name");
                 users.add(names);
-
             }
-
 
         }
 
@@ -48,8 +42,26 @@ public class Server implements Serializable
         {
             System.out.println(e);
         }
-        return null;
+        //return null;
     }
+
+    public static Connection getConnection()
+    {
+        String url = "jdbc:mysql://localhost:8889/Java";
+        String username = "root";
+        String password = "root";
+        Connection conn = null;
+        try {
+             conn = DriverManager.getConnection(url, username, password);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        return conn;
+
+    }
+
 
 
 
@@ -57,7 +69,7 @@ public class Server implements Serializable
 
     {
 
-        getConnection();
+        getUsers();
         Socket client;                    // Client socket
 
         ServerSocket serverSocket = null; // Server socket
@@ -78,6 +90,9 @@ public class Server implements Serializable
 
         System.out.println("\n Server available.!");
 
+
+
+
         do
             {
             client = serverSocket.accept();             // Accept the client to the server
@@ -93,10 +108,34 @@ public class Server implements Serializable
 
     public static ArrayList<Email> RetrieveEmails()
     {
-
         return lstEmails;
-
     }
+
+
+//    private void registerUser(String username)      // For registering the user to the SQL
+//    {
+//        String t = username;
+//
+//        try
+//        {
+//            Connection con = getConnection();
+//            PreparedStatement posted = con.prepareStatement("INSERT INTO Users (Name) VALUES ('"+t+"')");
+//            posted.executeUpdate();
+//            // outputToServer.println(t);
+//            //message.setText("Register Complete!");
+//
+//        }
+//        catch (Exception e)
+//        {
+//            System.out.println(e);
+//        }
+//
+//        finally
+//        {
+//            System.out.println("Insert complete");
+//        }
+//
+//    }
 
 
 
@@ -166,7 +205,6 @@ class ClientHandler extends Thread implements Serializable
     private Socket client;
     private Scanner input;
     private PrintWriter output;
-
     private String username;
 
     public ClientHandler(String username, Socket client)
@@ -198,7 +236,37 @@ String line =null;
             if (request.equals("get_inbox")) {
                 System.out.println("INSIDE INBOX REQUEST");
 
+                // remove all email and read them from database again
+                Server.RetrieveEmails().clear();
+
+
+
                 ArrayList<Email> lstInbox = new ArrayList<Email>();
+                Connection conn = Server.getConnection();
+                try
+                {
+                    Statement statement = conn.createStatement();
+                    String select = "SELECT * FROM EMAIL";
+                    ResultSet resultSet = statement.executeQuery(select);
+
+                    while (resultSet.next())
+                    {
+                        int userID = resultSet.getInt("EmailID");
+                        String usernameTo = resultSet.getString("usernameTo");
+                        String usernameFrom = resultSet.getString("usernameFrom");
+                        String message = resultSet.getString("message");
+                        byte[] attachmentFile = resultSet.getBytes("attachmentFile");
+                        String attachment = resultSet.getString("attachment");
+                        System.out.println("user id: " + userID) ;
+
+
+                        Server.RetrieveEmails().add(new Email(userID, usernameFrom, usernameTo, message, attachmentFile, attachment));
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+
                 for (Email inbox : Server.RetrieveEmails()) {
                     if (inbox.getTo().equals(username)) {
                         lstInbox.add(inbox);
@@ -207,7 +275,6 @@ String line =null;
 
                 ObjectOutputStream os = null;
                 try {
-
                     os = new ObjectOutputStream(client.getOutputStream());
 
                     os.writeObject(lstInbox);
@@ -243,38 +310,72 @@ String line =null;
                 System.out.println(attachmentName);
 
 
-
-
-                byte[] byteArray = null;
-
-                // get the attachment
-                ObjectInputStream inStream = null;
-                try
+                if(attachmentName.equals("Attachment: Empty"))
                 {
-                    inStream = new ObjectInputStream(client.getInputStream());
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-                try
-                {
-                    byteArray = (byte[])inStream.readObject();
-                }
-                catch (ClassNotFoundException e)
-                {
-                    e.printStackTrace();
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
+                    System.out.println("INSIDE IF ATTACHMENT NAME ==");
+                    output.println("Attachment: Empty");
 
 
+                    //Email email = new Email(username, to, message, null, null);
+                    //Server.RetrieveEmails().add(email);
 
-                Email email = new Email(username, to, message, byteArray,attachmentName);
+                    Connection conn = Server.getConnection();
+                    // MAKE THIS PREPARED
+                    try {
+                        Statement statement = conn.createStatement();
+                        String insertStatement = "INSERT INTO EMAIL (usernameTo, usernameFrom, message, attachmentFile, attachment)" +
+                                "VALUES (" + "'" + to + "'" + "," + "'" +username + "'" + "," + "'" + message + "'" + "," + " null, null )";
+                        System.out.println(insertStatement);
+                        statement.executeUpdate(insertStatement);
 
-                Server.RetrieveEmails().add(email);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+                else
+                {
+                    System.out.println("INSIDE ELSE OF ATTACHMENT NAME ==");
+                    output.println("attachment");
+                    byte[] byteAttachment = null;
+
+                    // get the attachment
+                    ObjectInputStream inStream = null;
+
+                    try {
+                        inStream = new ObjectInputStream(client.getInputStream());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        try {
+                            byteAttachment = (byte[])inStream.readObject();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                    Connection conn = Server.getConnection();
+                    try {
+                        Statement statement = conn.createStatement();
+                        String insertStatement = "INSERT INTO EMAIL (usernameTo, usernameFrom, message, attachmentFile, attachment)" +
+                                "VALUES (" + "'" + to + "'" + "," + "'" +username + "'" + "," + "'" + message + "'" + "," + "'" + byteAttachment + "'"
+                                + ", " + "'" + attachmentName + "'" + ")";
+                        System.out.println(insertStatement);
+                        statement.executeUpdate(insertStatement);
+
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+
+                    //Email email = new Email(username, to, message, byteArray,attachmentName);
+                    //Server.RetrieveEmails().add(email);
+
+                }
+
 
                 for (Email inbox : Server.RetrieveEmails())
                 {
@@ -284,19 +385,31 @@ String line =null;
                     System.out.println("Attachment Name:"  + inbox.getAttachment());
                     System.out.println("Attachment:"  + inbox.getAttachmentFiles());
 
-
                 }
-
 
             }
 
             else if (request.equals("delete_mail"))
             {
-                String i = input.nextLine();
-                int indexToRemove = Integer.parseInt(i);
+                //String i = input.nextLine();
+                int indexToRemove = input.nextInt();
                 System.out.println(indexToRemove);
 
-                Server.RetrieveEmails().remove(indexToRemove);
+                Connection conn = Server.getConnection();
+                Statement statement = null;
+                try {
+                    statement = conn.createStatement();
+
+                    String insertStatement = " DELETE FROM EMAIL WHERE EmailID = " + indexToRemove;
+                    System.out.println(insertStatement);
+                    statement.executeUpdate(insertStatement);
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+
+                //Server.RetrieveEmails().remo(indexToRemove);
             }
 
             request = input.nextLine();                 // Wait for the new request
