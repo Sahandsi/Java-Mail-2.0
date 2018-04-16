@@ -735,13 +735,16 @@ public class Client extends Application     // For GUI
         //File file;
        // Media sound;
         //MediaPlayer player;
-
+        VBox vbox1,vbox2,vbox3,vbox4;
 
 
         HBox hbox;
 
-        BorderPane pane;
-
+       // BorderPane pane;
+        viewer = new MediaView(player);
+//        viewer.setFitWidth(700);
+//        viewer.setFitHeight(300);
+        viewer.setPreserveRatio(true);
 
 
         startBtn = new Button("Start");
@@ -751,20 +754,30 @@ public class Client extends Application     // For GUI
         stopBtn = new Button("Stop");
         stopBtn.setOnAction(event->stopSound());
         hbox = new HBox();
+
+        vbox1 = new VBox();
+        vbox2 = new VBox();
+        vbox3 = new VBox();
+        vbox4 = new VBox();
+
+        vbox1.getChildren().addAll(vbox2,vbox3,vbox4);
+
         hbox.getChildren().addAll(startBtn, pauseBtn, stopBtn);
-        hbox.maxHeight(100);
-        hbox.setMaxWidth(150);
-        pane = new BorderPane();
-        pane.setBottom(hbox);
+        hbox.setAlignment(Pos.BOTTOM_CENTER);
+
+       // hbox.maxHeight(100);
+        //hbox.setMaxWidth(150);
+       // pane = new BorderPane();
+        //pane.setBottom(hbox);
+
+        vbox4.getChildren().addAll(hbox);
+
         BorderPane.setAlignment(hbox, Pos.BOTTOM_CENTER);
 
-        hbox.setPadding(new Insets(10, 50, 50, 50));
+        hbox.setPadding(new Insets(10, 50, 10, 50));
         hbox.setSpacing(10);
 
-        viewer = new MediaView(player);
-//        viewer.setFitWidth(700);
-//        viewer.setFitHeight(300);
-        viewer.setPreserveRatio(true);
+
 
                 startBtn.setStyle(
                 "-fx-background-radius: 5em; " +
@@ -791,19 +804,33 @@ public class Client extends Application     // For GUI
 
 
 
-
         file = new File(attachmentname);
         sound = new Media(file.toURI().toString());
 
         double MIN_CHANGE = 0.5 ;
 
                 player = new MediaPlayer(sound);
-        MediaView mediaView = new MediaView(player);
+       MediaView mediaView = new MediaView(player);
+
 
         Slider slider = new Slider();
         player.totalDurationProperty().addListener((obs, oldDuration, newDuration) -> slider.setMax(newDuration.toSeconds()));
 
-        BorderPane root = new BorderPane(mediaView, hbox, pane, slider, viewer);
+        vbox2.getChildren().add(mediaView);
+        vbox2.setAlignment(Pos.CENTER);
+        vbox3.setAlignment(Pos.CENTER);
+        vbox3.getChildren().add(slider);
+
+        vbox2.setPadding(new Insets(10, 0, 0, 0));
+
+
+
+        BorderPane root = new BorderPane(vbox3, vbox2, null, vbox4, null);
+
+
+
+
+
 
         slider.valueChangingProperty().addListener((obs, wasChanging, isChanging) -> {
             if (! isChanging) {
@@ -826,7 +853,7 @@ public class Client extends Application     // For GUI
             }
         });
 
-        Scene scene = new Scene(root, 540, 280);
+        Scene scene = new Scene(root, 740, 380);
         primaryStage.setScene(scene);
         primaryStage.show();
 
