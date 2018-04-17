@@ -1,6 +1,5 @@
 import javafx.application.Application;
 import javafx.collections.*;
-import javafx.event.ActionEvent;
 import javafx.geometry.*;
 import javafx.scene.Scene;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -75,7 +74,7 @@ public class Client extends Application     // For GUI
         grid.add(userName, 0, 1);
 
 
-        Label regName = new Label("whats your name?");         // Label for the Register
+        Label regName = new Label("Whats your name?");         // Label for the Register
         grid.add(regName, 0, 2);
 
         TextField userTextField = new TextField();                  // Textfield for Username
@@ -378,9 +377,6 @@ public class Client extends Application     // For GUI
         mailTo.setText(emailToReply.getFrom());
 
 
-
-        // event handler
-        //buttonAttach.setOnAction(event ->buttonAttach(event, fileChooser, stage, attachmentName));
         buttonSend.setOnAction(event -> sendEmail(mailTo.getText(), mailSubject.getText(),textArea.getText(),stage,attachmentName)) ;     // Sender column and data added to the mail class
 
 
@@ -519,7 +515,7 @@ public class Client extends Application     // For GUI
 
 
         // event handler
-        buttonAttach.setOnAction(event ->buttonAttach(event, fileChooser, stage, attachmentName));
+        buttonAttach.setOnAction(event ->buttonAttach(fileChooser, stage, attachmentName));
         buttonSend.setOnAction(event -> sendEmail(mailTo.getText(), mailSubject.getText(),textArea.getText(),stage, attachmentName));
         mailTo.setPromptText("Recipient Mail Address");
         textArea.setPromptText("Enter text");
@@ -541,7 +537,6 @@ public class Client extends Application     // For GUI
         int intFileLen;
         byte[] byteArray = null;
 
-        String t ="-1";
 
         String filename = attachmentname.getText();
 
@@ -606,7 +601,7 @@ public class Client extends Application     // For GUI
     }
 
 
-    private void buttonAttach(ActionEvent event, FileChooser fileChooser, Stage stage, Label attachmentName)
+    private void buttonAttach(FileChooser fileChooser, Stage stage, Label attachmentName)
     {
 
         File file = fileChooser.showOpenDialog(stage);
@@ -658,17 +653,12 @@ public class Client extends Application     // For GUI
         String filename = attachmentname;
         Stage primaryStage = new Stage();
         Image image;
-
-        Button downloadButton = new Button("Download");
-        downloadButton.setOnAction(e ->  attachmenstDownload(attachmentname));
-        downloadButton.setPrefSize(100, 20);
-
-        image = new Image(new File(filename).toURI().toString());
-
-
         ImageView imageView;
         BorderPane pane;
         Scene scene;
+
+
+        image = new Image(new File(filename).toURI().toString());
 
 
         imageView = new ImageView(image);
@@ -676,7 +666,6 @@ public class Client extends Application     // For GUI
         imageView.setFitHeight(350);
         imageView.setPreserveRatio(true);
         pane = new BorderPane();
-        pane.setBottom(downloadButton);
         pane.setTop(imageView);
 
         scene = new Scene(pane);
@@ -689,24 +678,19 @@ public class Client extends Application     // For GUI
 
 
 
-    public void attachmenstDownload(String attachmentname)
-    {
-
-
-    }
 
 
     public void playMedia(String attachmentname)
     {
 
 
-
         MediaView viewer;
-
         Button startBtn;
         Button pauseBtn;
         Button stopBtn;
         Button darkBtn;
+        HBox hbox;
+
 
         Stage primaryStage = new Stage();
 
@@ -718,7 +702,6 @@ public class Client extends Application     // For GUI
         vbox3 = new VBox();
         vbox4 = new VBox();
 
-        HBox hbox;
 
         viewer = new MediaView(player);
         viewer.setPreserveRatio(true);
@@ -738,13 +721,10 @@ public class Client extends Application     // For GUI
 
 
         vbox1.getChildren().addAll(vbox2,vbox3,vbox4);
+        vbox4.getChildren().addAll(hbox);
 
         hbox.getChildren().addAll(pauseBtn,startBtn, stopBtn,darkBtn);
         hbox.setAlignment(Pos.BOTTOM_CENTER);
-
-
-        vbox4.getChildren().addAll(hbox);
-
         BorderPane.setAlignment(hbox, Pos.BOTTOM_CENTER);
 
         hbox.setPadding(new Insets(10, 50, 10, 50));
@@ -798,14 +778,10 @@ public class Client extends Application     // For GUI
 
         vbox2.getChildren().add(mediaView);
         vbox2.setAlignment(Pos.CENTER);
+        vbox2.setPadding(new Insets(10, 0, 0, 0));
         vbox3.setAlignment(Pos.CENTER);
         vbox3.getChildren().add(slider);
-
-        vbox2.setPadding(new Insets(10, 0, 0, 0));
         vbox4.setStyle("-fx-background-color: #336699;");
-
-
-
 
 
         BorderPane root = new BorderPane(vbox3, vbox2, null, vbox4, null);
@@ -893,13 +869,12 @@ public class Client extends Application     // For GUI
 
 
             Scanner input = new Scanner(attachmentname);
-
             File file = new File(input.nextLine());
-
             input = new Scanner(file);
 
 
-            while (input.hasNextLine()) {
+            while (input.hasNextLine())
+            {
                 String line = input.nextLine();
                 System.out.println(line);
                 textArea.appendText("\n" + input.nextLine());
@@ -907,16 +882,15 @@ public class Client extends Application     // For GUI
             }
             input.close();
 
-        } catch (Exception ex) {
+        }
+        catch (Exception ex)
+        {
             ex.printStackTrace();
         }
 
 
         border.setTop(hbox);
-
         textArea.setEditable(false);
-
-
         border.setCenter(textArea);
         scene = new Scene(border, 500, 500);
 

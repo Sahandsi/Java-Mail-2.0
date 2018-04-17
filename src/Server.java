@@ -10,8 +10,6 @@ public class Server implements Serializable
 
     private static ArrayList<String> users = new ArrayList<String>();       // List of users array(list)
     private static ArrayList<Email> lstEmails = new ArrayList<Email>();     // List of emails array(list)
-    private static ArrayList<String> messages = new ArrayList<String>();     // List of emails array(list)
-
 
     private static void getUsers()
     {
@@ -20,8 +18,6 @@ public class Server implements Serializable
 
 
             Statement statement = null;
-
-            //Class.forName(driver);
 
             Connection conn = getConnection();
             System.out.println("Connected");
@@ -42,7 +38,6 @@ public class Server implements Serializable
         {
             System.out.println(e);
         }
-        //return null;
     }
 
     public static Connection getConnection()
@@ -71,10 +66,8 @@ public class Server implements Serializable
 
         getUsers();
         Socket client;                    // Client socket
-
         ServerSocket serverSocket = null; // Server socket
         final int PORT = 6666;
-
         ClientHandler clientHandler;
 
 
@@ -112,37 +105,9 @@ public class Server implements Serializable
     }
 
 
-//    private void registerUser(String username)      // For registering the user to the SQL
-//    {
-//        String t = username;
-//
-//        try
-//        {
-//            Connection con = getConnection();
-//            PreparedStatement posted = con.prepareStatement("INSERT INTO Users (Name) VALUES ('"+t+"')");
-//            posted.executeUpdate();
-//            // outputToServer.println(t);
-//            //message.setText("Register Complete!");
-//
-//        }
-//        catch (Exception e)
-//        {
-//            System.out.println(e);
-//        }
-//
-//        finally
-//        {
-//            System.out.println("Insert complete");
-//        }
-//
-//    }
-
-
-
     private static String validateUser(Socket client)
     {
        Scanner inputFromClient = null;
-       // BufferedReader inputFromClient = null;
         PrintWriter outputToClient = null;
         boolean validUser = false;
 
@@ -150,7 +115,6 @@ public class Server implements Serializable
         {
 
           inputFromClient = new Scanner(client.getInputStream());                               // Server to get the input from the client
-           // inputFromClient = new BufferedReader(client);                               // Server to get the input from the client
 
             outputToClient = new PrintWriter(client.getOutputStream(), true);            // Server to send data to the client
 
@@ -315,52 +279,14 @@ class ClientHandler extends Thread implements Serializable
                 String attachmentName =input.nextLine();
                 System.out.println(attachmentName);
 
-
-
-
-//                StringBuilder str = new StringBuilder(attachmentName);
-//                System.out.println("string = " + str);
-
-//                // insert character at offset 8
-//                str.insert(8, 's');
-//
-//                // print StringBuilder after insertion
-//                System.out.print("After insertion = ");
-//                System.out.println(str.toString());// this will print Tutorials
-//
-//
-//
-
-
-
-
-
-//                String fileName = attachmentName;
-//                String  attachementName = "-1";
-//
-//
-//
-//                int lastDot = fileName.lastIndexOf('.');
-//                String newFileName = fileName.substring(0,lastDot) + attachementName + fileName.substring(lastDot);
-
-//
-//                StringBuilder newFileName = new StringBuilder();
-//              //  newFileName.append("-1");
-//                newFileName.append(fileName.substring(0, fileName.lastIndexOf('.') - 1));
-////                fileName = newFileName.toString();
-//                System.out.println("new file name is" + str);
-
                 if(attachmentName.equals("Attachment: Empty"))
                 {
                     System.out.println("INSIDE IF ATTACHMENT NAME ==");
                     output.println("Attachment: Empty");
 
 
-                    //Email email = new Email(username, to, message, null, null);
-                    //Server.RetrieveEmails().add(email);
-
                     Connection conn = Server.getConnection();
-                    // MAKE THIS PREPARED
+
                     try {
                         Statement statement = conn.createStatement();
                         String insertStatement = "INSERT INTO EMAIL (usernameTo, usernameFrom, emailSubject,message, attachmentFile, attachment)" +
@@ -431,7 +357,7 @@ class ClientHandler extends Thread implements Serializable
 
             else if (request.equals("delete_mail"))
             {
-                //String i = input.nextLine();
+
                 int indexToRemove = input.nextInt();
                 System.out.println(indexToRemove);
 
@@ -448,8 +374,6 @@ class ClientHandler extends Thread implements Serializable
                     e.printStackTrace();
                 }
 
-
-                //Server.RetrieveEmails().remo(indexToRemove);
             }
 
             request = input.nextLine();                 // Wait for the new request
