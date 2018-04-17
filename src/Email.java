@@ -37,7 +37,7 @@ public class Email implements Serializable
         return to;
     }
 
-    public String getemailSubject()
+    public String getEmailSubject()
     {
         return emailSubject;
     }

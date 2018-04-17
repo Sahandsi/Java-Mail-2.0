@@ -232,14 +232,13 @@ public class Client extends Application     // For GUI
         ID.setCellValueFactory(new PropertyValueFactory<>("userID"));
         ID.setVisible(false);
 
-
         TableColumn<Email, String> sentBy = new TableColumn<>("Sent By");
-        sentBy.setPrefWidth(250);
+        sentBy.setPrefWidth(125);
         sentBy.setCellValueFactory(new PropertyValueFactory<>("from"));
 
-        TableColumn<Email, String> emailSubject = new TableColumn<>("emailSubject");
-        emailSubject.setPrefWidth(250);
-        emailSubject.setCellValueFactory(new PropertyValueFactory<>("emailSubject"));
+        TableColumn<Email, String> mailSubject = new TableColumn<>("Email Subject");
+        mailSubject.setPrefWidth(250);
+        mailSubject.setCellValueFactory(new PropertyValueFactory<>("emailSubject"));
 
 
         TableColumn<Email, String> message = new TableColumn<>("Message");
@@ -251,9 +250,10 @@ public class Client extends Application     // For GUI
         attachment.setCellValueFactory(new PropertyValueFactory<>("attachment"));
 
 
+
         TableView<Email> inboxTable = new TableView<>();
 
-        inboxTable.getColumns().addAll(sentBy, emailSubject,message,attachment);          // Add columns of the sender and message
+        inboxTable.getColumns().addAll(sentBy, mailSubject,message,attachment);          // Add columns of the sender and message
 
 
         Button buttonCompose = new Button("Compose");
@@ -289,6 +289,7 @@ public class Client extends Application     // For GUI
 
         border.setTop(hbox);
         inboxTable.setItems(oMail);             // Joining the column an data
+
 
         inboxTable.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
 
@@ -539,9 +540,16 @@ public class Client extends Application     // For GUI
         FileInputStream fileIn;
         int intFileLen;
         byte[] byteArray = null;
+
+        String t ="-1";
+
         String filename = attachmentname.getText();
 
         System.out.println(attachmentname);
+
+
+
+
 
         if (to.isEmpty() || message.isEmpty()) // Check if the parameters are empty
         {
@@ -563,13 +571,10 @@ public class Client extends Application     // For GUI
                     intFileLen = (int)(new File(filename)).length(); // cast the file length to an int
                     byteArray = new byte[intFileLen];
 
-                    // read in the byte array
                     try
                     {
                         fileIn.read(byteArray);
                         fileIn.close();
-
-                        // send the attachment as well to the server
                         ObjectOutputStream objectOutput = new ObjectOutputStream(socket.getOutputStream());
                         objectOutput.writeObject(byteArray);
                         objectOutput.flush(); // flush the stream
@@ -586,7 +591,7 @@ public class Client extends Application     // For GUI
                     e.printStackTrace();
                 }
             }
-            System.out.println("hahay");
+
             return;
 
 
@@ -626,12 +631,12 @@ public class Client extends Application     // For GUI
 
         if (extension.equals("mp3"))
         {
-            playSound(attachmentname);
+            playMedia(attachmentname);
         }
 
         if (extension.equals("wav"))
         {
-            playSound(attachmentname);
+            playMedia(attachmentname);
         }
          if (extension.equals("gif"))
         {
@@ -639,7 +644,7 @@ public class Client extends Application     // For GUI
         }
         else if (extension.equals("flv"))
         {
-            playSound(attachmentname);
+            playMedia(attachmentname);
         }
         else if (extension.equals("txt"))
         {
@@ -654,22 +659,27 @@ public class Client extends Application     // For GUI
         Stage primaryStage = new Stage();
         Image image;
 
+        Button downloadButton = new Button("Download");
+        downloadButton.setOnAction(e ->  attachmenstDownload(attachmentname));
+        downloadButton.setPrefSize(100, 20);
+
         image = new Image(new File(filename).toURI().toString());
 
 
-    ImageView imageView;
-    BorderPane pane;
-    Scene scene;
+        ImageView imageView;
+        BorderPane pane;
+        Scene scene;
 
 
-    imageView = new ImageView(image);
+        imageView = new ImageView(image);
         imageView.setFitWidth(500);
         imageView.setFitHeight(350);
         imageView.setPreserveRatio(true);
-    pane = new BorderPane();
-        pane.setCenter(imageView);
+        pane = new BorderPane();
+        pane.setBottom(downloadButton);
+        pane.setTop(imageView);
 
-    scene = new Scene(pane);
+        scene = new Scene(pane);
 
 
         primaryStage.setScene(scene);
@@ -679,56 +689,16 @@ public class Client extends Application     // For GUI
 
 
 
-//    public void playVideo(String attachmentname)
-//    {
-//        File file;
-//        Media video;
-//        MediaPlayer player;
-//        MediaView viewer;
-//        StackPane pane;
-//        Scene scene;
-//        Stage primaryStage = new Stage();
-//
-//
-//        String filename = attachmentname;
-//
-//
-//        file = new File(filename); //*** ONLY ONE THAT WORKS!!!
-//
-//        video = new Media(file.toURI().toString());
-//        player = new MediaPlayer(video);
-//        player.setAutoPlay(true);
-//
-//        viewer = new MediaView(player);
-//        viewer.setFitWidth(700);
-//        viewer.setFitHeight(300);
-//        viewer.setPreserveRatio(true);
-//
-//        pane = new StackPane(viewer);
-//
-//        scene = new Scene(pane);
-//
-//
-//        primaryStage.setScene(scene);
-//        primaryStage.setTitle("Video Demo");
-//        primaryStage.show();
-//    }
-
-
-
-
-    public void playSound(String attachmentname)
+    public void attachmenstDownload(String attachmentname)
     {
 
-//        Button roundButton = new Button();
-//
-//        roundButton.setStyle(
-//                "-fx-background-radius: 5em; " +
-//                        "-fx-min-width: 30px; " +
-//                        "-fx-min-height: 30px; " +
-//                        "-fx-max-width: 30px; " +
-//                        "-fx-max-height: 30px;"
-//        );
+
+    }
+
+
+    public void playMedia(String attachmentname)
+    {
+
 
 
         MediaView viewer;
@@ -736,21 +706,21 @@ public class Client extends Application     // For GUI
         Button startBtn;
         Button pauseBtn;
         Button stopBtn;
+        Button darkBtn;
 
         Stage primaryStage = new Stage();
 
-        //File file;
-       // Media sound;
-        //MediaPlayer player;
+
         VBox vbox1,vbox2,vbox3,vbox4;
 
+        vbox1 = new VBox();
+        vbox2 = new VBox();
+        vbox3 = new VBox();
+        vbox4 = new VBox();
 
         HBox hbox;
 
-       // BorderPane pane;
         viewer = new MediaView(player);
-//        viewer.setFitWidth(700);
-//        viewer.setFitHeight(300);
         viewer.setPreserveRatio(true);
 
 
@@ -760,22 +730,18 @@ public class Client extends Application     // For GUI
         pauseBtn.setOnAction(event->pauseSound());
         stopBtn = new Button("Stop");
         stopBtn.setOnAction(event->stopSound());
+
+        darkBtn = new Button("Enable Dark Mode");
+        darkBtn.setOnAction(event -> darkMode(vbox2,vbox3,vbox4));
         hbox = new HBox();
 
-        vbox1 = new VBox();
-        vbox2 = new VBox();
-        vbox3 = new VBox();
-        vbox4 = new VBox();
+
 
         vbox1.getChildren().addAll(vbox2,vbox3,vbox4);
 
-        hbox.getChildren().addAll(pauseBtn,startBtn, stopBtn);
+        hbox.getChildren().addAll(pauseBtn,startBtn, stopBtn,darkBtn);
         hbox.setAlignment(Pos.BOTTOM_CENTER);
 
-       // hbox.maxHeight(100);
-        //hbox.setMaxWidth(150);
-       // pane = new BorderPane();
-        //pane.setBottom(hbox);
 
         vbox4.getChildren().addAll(hbox);
 
@@ -807,6 +773,13 @@ public class Client extends Application     // For GUI
                         "-fx-max-width: 60px; " +
                         "-fx-max-height: 60px;"
         );
+        darkBtn.setStyle(
+                "-fx-background-radius: 5em; " +
+                        "-fx-min-width: 60px; " +
+                        "-fx-min-height: 60px; " +
+                        "-fx-max-width: 60px; " +
+                        "-fx-max-height: 60px;"
+        );
 
 
 
@@ -830,6 +803,7 @@ public class Client extends Application     // For GUI
 
         vbox2.setPadding(new Insets(10, 0, 0, 0));
         vbox4.setStyle("-fx-background-color: #336699;");
+
 
 
 
@@ -871,6 +845,14 @@ public class Client extends Application     // For GUI
     }
 
 
+    public void darkMode(VBox vbox2,VBox vbox3,VBox vbox4)
+    {
+
+        vbox2.setStyle("-fx-background-color: #000000;");
+        vbox3.setStyle("-fx-background-color: #000000;");
+        vbox4.setStyle("-fx-background-color: #000000;");
+
+    }
 
     public void resumeSound()
     {

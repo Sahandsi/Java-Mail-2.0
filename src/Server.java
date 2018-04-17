@@ -248,16 +248,21 @@ class ClientHandler extends Thread implements Serializable
                     String select = "SELECT * FROM EMAIL";
                     ResultSet resultSet = statement.executeQuery(select);
 
+
+
+
                     while (resultSet.next())
                     {
                         int userID = resultSet.getInt("EmailID");
                         String usernameTo = resultSet.getString("usernameTo");
                         String usernameFrom = resultSet.getString("usernameFrom");
                         String emailSubject = resultSet.getString("emailSubject");
+                        System.out.println("READING SUBJECT: " + emailSubject);
                         String message = resultSet.getString("message");
                         byte[] attachmentFile = resultSet.getBytes("attachmentFile");
                         String attachment = resultSet.getString("attachment");
                         System.out.println("user id: " + userID) ;
+
 
 
                         Server.RetrieveEmails().add(new Email(userID, usernameFrom, usernameTo,emailSubject ,message, attachmentFile, attachment));
@@ -310,6 +315,40 @@ class ClientHandler extends Thread implements Serializable
                 String attachmentName =input.nextLine();
                 System.out.println(attachmentName);
 
+
+
+
+//                StringBuilder str = new StringBuilder(attachmentName);
+//                System.out.println("string = " + str);
+
+//                // insert character at offset 8
+//                str.insert(8, 's');
+//
+//                // print StringBuilder after insertion
+//                System.out.print("After insertion = ");
+//                System.out.println(str.toString());// this will print Tutorials
+//
+//
+//
+
+
+
+
+
+//                String fileName = attachmentName;
+//                String  attachementName = "-1";
+//
+//
+//
+//                int lastDot = fileName.lastIndexOf('.');
+//                String newFileName = fileName.substring(0,lastDot) + attachementName + fileName.substring(lastDot);
+
+//
+//                StringBuilder newFileName = new StringBuilder();
+//              //  newFileName.append("-1");
+//                newFileName.append(fileName.substring(0, fileName.lastIndexOf('.') - 1));
+////                fileName = newFileName.toString();
+//                System.out.println("new file name is" + str);
 
                 if(attachmentName.equals("Attachment: Empty"))
                 {
@@ -373,7 +412,7 @@ class ClientHandler extends Thread implements Serializable
                     }
 
 
-                    System.out.println("hahay");
+
                 }
 
 
@@ -381,7 +420,7 @@ class ClientHandler extends Thread implements Serializable
                 {
                     System.out.println("From:"  + inbox.getFrom());
                     System.out.println("To:"  + inbox.getTo());
-                    System.out.println("Subject:"  + inbox.getemailSubject());
+                    System.out.println("Subject:"  + inbox.getEmailSubject());
                     System.out.println("Message:"  + inbox.getMessage());
                     System.out.println("Attachment Name:"  + inbox.getAttachment());
                     System.out.println("Attachment:"  + inbox.getAttachmentFiles());
