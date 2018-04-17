@@ -118,23 +118,39 @@ public class Client extends Application     // For GUI
 
     private static Connection getConnection()                      // All the settings for the SQL connection
     {
+//        try
+//        {
+//            String driver = "com.mysql.jdbc.Driver";
+//            String url = "jdbc:mysql://homepages.shu.ac.uk:3306/b5038121_db2";
+//            String username = "b5038121";
+//            String password = "Sami1369";
+//            Class.forName(driver);
+//            Connection conn = DriverManager.getConnection(url, username, password);
+//            System.out.println("Connected");
+//            return conn;
+//
+//        }
+//        catch(Exception e)
+//        {
+//            System.out.println(e);
+//        }
+//        return null;
+        
+        Connection connection = null;
         try
         {
-            String driver = "com.mysql.jdbc.Driver";
-            String url = "jdbc:mysql://localhost:8889/Java";
-            String username = "root";
-            String password = "root";
-            Class.forName(driver);
-            Connection conn = DriverManager.getConnection(url, username, password);
-            System.out.println("Connected");
-            return conn;
+            connection = DriverManager.getConnection(
+                "jdbc:mysql://homepages.shu.ac.uk:3306/b5038121_db2",
+                                                    "b5038121","Sami1369");
 
         }
-        catch(Exception e)
+        catch(SQLException sqlEx)
         {
-            System.out.println(e);
+            System.out.println(
+                        "* Cannot connect to database! *");
+            System.exit(1);
         }
-        return null;
+        return connection;
     }
 
     private void registerUser(String username, Label message)      // For registering the user to the SQL
@@ -258,6 +274,11 @@ public class Client extends Application     // For GUI
         Button buttonCompose = new Button("Compose");
         buttonCompose.setPrefSize(100, 20);
         buttonCompose.setOnAction(e -> sendMail());
+        
+        
+        Button buttonDowload = new Button("Download");
+        buttonDowload.setPrefSize(100, 20);
+        buttonDowload.setOnAction(e -> downloadMail());
 
         Button buttonReply = new Button("Reply");
         buttonReply.setPrefSize(100, 20);
@@ -284,7 +305,7 @@ public class Client extends Application     // For GUI
         buttonRefresh.setOnAction(e -> refreshMail(inboxTable));
         buttonRefresh.setPrefSize(100, 20);
 
-        hbox.getChildren().addAll(buttonCompose, buttonDelete,buttonRefresh, buttonReply,buttonExit);
+        hbox.getChildren().addAll(buttonCompose, buttonDelete,buttonRefresh, buttonReply,buttonDowload,buttonExit);
 
         border.setTop(hbox);
         inboxTable.setItems(oMail);             // Joining the column an data
@@ -329,6 +350,12 @@ public class Client extends Application     // For GUI
     {
         Email email = inboxTable.getSelectionModel().getSelectedItem();
         seeEmail(email,inboxTable);
+    }
+    
+    
+    private void downloadMail()
+    {
+        
     }
 
     private void reply(Email emailToReply)
@@ -540,7 +567,7 @@ public class Client extends Application     // For GUI
 
         String filename = attachmentname.getText();
 
-        System.out.println(attachmentname);
+        //System.out.println(attachmentname);
 
 
 
@@ -574,6 +601,18 @@ public class Client extends Application     // For GUI
                         objectOutput.writeObject(byteArray);
                         objectOutput.flush(); // flush the stream
                         System.out.println(byteArray);
+                        
+                        
+                        
+                        // create another with number -1 at the end
+                        String newAttachmentName = filename.substring(0, filename.indexOf('.')); // before the extension .
+                        newAttachmentName = newAttachmentName  + "-1" + "." + filename.substring(filename.indexOf('.') + 1); // -1.extensionNaem
+                        System.out.println(newAttachmentName);
+                        
+                        FileOutputStream outFile = new FileOutputStream(newAttachmentName);
+                        outFile.write(byteArray);
+                        outFile.close();
+                        outputToServer.println(newAttachmentName);
 
                     }
                     catch (IOException e)

@@ -42,18 +42,35 @@ public class Server implements Serializable
 
     public static Connection getConnection()
     {
-        String url = "jdbc:mysql://localhost:8889/Java";
-        String username = "root";
-        String password = "root";
-        Connection conn = null;
-        try {
-             conn = DriverManager.getConnection(url, username, password);
-        } catch (SQLException e) {
-            e.printStackTrace();
+//        String driver = "com.mysql.jdbc.Driver";
+//        String url = "jdbc:mysql://homepages.shu.ac.uk:3306/b5038121_db2";
+//        String username = "b5038121";
+//        String password = "Sami1369";
+//        Connection conn = null;
+//        try {
+//             conn = DriverManager.getConnection(url, username, password);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            System.exit(1);
+//        }
+//
+//        return conn;
+        Connection connection = null;
+        try
+        {
+            connection = DriverManager.getConnection(
+                "jdbc:mysql://homepages.shu.ac.uk:3306/b5038121_db2",
+                                                    "b5038121","Sami1369");
+           
+        }
+        catch(SQLException sqlEx)
+        {
+            System.out.println(
+                        "* Cannot connect to database! *");
             System.exit(1);
         }
-
-        return conn;
+        return connection;
+        
 
     }
 
@@ -209,7 +226,7 @@ class ClientHandler extends Thread implements Serializable
                 try
                 {
                     Statement statement = conn.createStatement();
-                    String select = "SELECT * FROM EMAIL";
+                    String select = "SELECT * FROM Email";
                     ResultSet resultSet = statement.executeQuery(select);
 
 
@@ -289,7 +306,7 @@ class ClientHandler extends Thread implements Serializable
 
                     try {
                         Statement statement = conn.createStatement();
-                        String insertStatement = "INSERT INTO EMAIL (usernameTo, usernameFrom, emailSubject,message, attachmentFile, attachment)" +
+                        String insertStatement = "INSERT INTO Email (usernameTo, usernameFrom, emailSubject,message, attachmentFile, attachment)" +
                                 "VALUES (" + "'" + to + "'" + "," + "'" +username + "'" + "," + "'"+ emailSubject +"'" + "," + "'" + message + "'" + "," + " null, null )";
                         System.out.println(insertStatement);
                         statement.executeUpdate(insertStatement);
@@ -324,12 +341,13 @@ class ClientHandler extends Thread implements Serializable
                         e.printStackTrace();
                     }
 
+                    String newAttachmentName = input.nextLine();
                     Connection conn = Server.getConnection();
                     try {
                         Statement statement = conn.createStatement();
-                        String insertStatement = "INSERT INTO EMAIL (usernameTo, usernameFrom, emailSubject,message, attachmentFile, attachment)" +
+                        String insertStatement = "INSERT INTO Email (usernameTo, usernameFrom, emailSubject,message, attachmentFile, attachment)" +
                                 "VALUES (" + "'" + to + "'" + "," + "'" +username +"'" + "," + "'"+emailSubject + "'" + "," + "'" + message + "'" + "," + "'" + byteAttachment + "'"
-                                + ", " + "'" + attachmentName + "'" + ")";
+                                + ", " + "'" + newAttachmentName + "'" + ")";
                         System.out.println(insertStatement);
                         statement.executeUpdate(insertStatement);
 
@@ -366,7 +384,7 @@ class ClientHandler extends Thread implements Serializable
                 try {
                     statement = conn.createStatement();
 
-                    String insertStatement = " DELETE FROM EMAIL WHERE EmailID = " + indexToRemove;
+                    String insertStatement = " DELETE FROM Email WHERE EmailID = " + indexToRemove;
                     System.out.println(insertStatement);
                     statement.executeUpdate(insertStatement);
 
