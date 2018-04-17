@@ -56,6 +56,11 @@ public class Email implements Serializable
     {
         return attachmentFile;
     }
+    
+    public String getExtension()
+    {
+        return attachment.substring(attachment.indexOf(".") + 1);
+    }
 
     public int getUserID() { return userID; }
 

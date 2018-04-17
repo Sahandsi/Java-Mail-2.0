@@ -275,10 +275,7 @@ public class Client extends Application     // For GUI
         buttonCompose.setPrefSize(100, 20);
         buttonCompose.setOnAction(e -> sendMail());
         
-        
-        Button buttonDowload = new Button("Download");
-        buttonDowload.setPrefSize(100, 20);
-        buttonDowload.setOnAction(e -> downloadMail());
+  
 
         Button buttonReply = new Button("Reply");
         buttonReply.setPrefSize(100, 20);
@@ -305,7 +302,7 @@ public class Client extends Application     // For GUI
         buttonRefresh.setOnAction(e -> refreshMail(inboxTable));
         buttonRefresh.setPrefSize(100, 20);
 
-        hbox.getChildren().addAll(buttonCompose, buttonDelete,buttonRefresh, buttonReply,buttonDowload,buttonExit);
+        hbox.getChildren().addAll(buttonCompose, buttonDelete,buttonRefresh, buttonReply,buttonExit);
 
         border.setTop(hbox);
         inboxTable.setItems(oMail);             // Joining the column an data
@@ -353,8 +350,46 @@ public class Client extends Application     // For GUI
     }
     
     
-    private void downloadMail()
+    private void downloadMail(Email mail, Stage stage)
     {
+        
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter(mail.getExtension() + "File",  "*." + mail.getExtension()));
+        System.out.println(mail.getExtension());
+        File file = fileChooser.showSaveDialog(stage);
+        if(file != null) // prevenet null pointer exception
+        {
+            FileOutputStream outFile;
+            try
+            {
+                outFile = new FileOutputStream(file.getName());
+                try
+                {
+                    outFile.write(mail.getAttachmentFiles());
+                }
+                catch (IOException e1)
+                {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+                try
+                {
+                    outFile.close();
+                }
+                catch (IOException e)
+                {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            catch (FileNotFoundException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
         
     }
 
@@ -472,12 +507,16 @@ public class Client extends Application     // For GUI
 
         Button buttonClose = new Button("Close");
         buttonClose.setPrefSize(100, 20);
+        
+        Button buttonDowload = new Button("Download");
+        buttonDowload.setPrefSize(100, 20);
+        buttonDowload.setOnAction(e -> downloadMail(seeEmail, stage));
 
         Button buttonViewAttachment = new Button("View Attachment");
         buttonViewAttachment.setPrefSize(100, 20);
 
 
-        hbox.getChildren().addAll(buttonClose,buttonViewAttachment);
+        hbox.getChildren().addAll(buttonClose,buttonViewAttachment, buttonDowload);
         border.setTop(hbox);
 
         TextArea textArea = new TextArea(); //making a TexrArea object
@@ -567,7 +606,7 @@ public class Client extends Application     // For GUI
 
         String filename = attachmentname.getText();
 
-        //System.out.println(attachmentname);
+      
 
 
 
@@ -658,11 +697,8 @@ public class Client extends Application     // For GUI
 
         String extension = "";
 
-        int i = attachmentname.lastIndexOf('.');
-        if (i > 0) {
-            extension = attachmentname.substring(i+1);
-        }
-
+        extension = attachmentname.substring(attachmentname.lastIndexOf('.') + 1);
+      
         if (extension.equals("mp3"))
         {
             playMedia(attachmentname);
