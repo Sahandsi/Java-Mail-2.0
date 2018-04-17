@@ -42,34 +42,34 @@ public class Server implements Serializable
 
     public static Connection getConnection()
     {
-//        String driver = "com.mysql.jdbc.Driver";
-//        String url = "jdbc:mysql://homepages.shu.ac.uk:3306/b5038121_db2";
-//        String username = "b5038121";
-//        String password = "Sami1369";
-//        Connection conn = null;
-//        try {
-//             conn = DriverManager.getConnection(url, username, password);
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            System.exit(1);
-//        }
-//
-//        return conn;
-        Connection connection = null;
-        try
-        {
-            connection = DriverManager.getConnection(
-                "jdbc:mysql://homepages.shu.ac.uk:3306/b5038121_db2",
-                                                    "b5038121","Sami1369");
-           
-        }
-        catch(SQLException sqlEx)
-        {
-            System.out.println(
-                        "* Cannot connect to database! *");
+        String url = "jdbc:mysql://localhost:8889/Java";
+        String username = "root";
+        String password = "root";
+        Connection conn = null;
+
+        try {
+             conn = DriverManager.getConnection(url, username, password);
+        } catch (SQLException e) {
+            e.printStackTrace();
             System.exit(1);
         }
-        return connection;
+
+        return conn;
+//        Connection connection = null;
+//        try
+//        {
+//            connection = DriverManager.getConnection(
+//                "jdbc:mysql://homepages.shu.ac.uk:3306/b5038121_db2",
+//                                                    "b5038121","Sami1369");
+//
+//        }
+//        catch(SQLException sqlEx)
+//        {
+//            System.out.println(
+//                        "* Cannot connect to database! *");
+//            System.exit(1);
+//        }
+//        return connection;
         
 
     }
@@ -341,19 +341,67 @@ class ClientHandler extends Thread implements Serializable
                         e.printStackTrace();
                     }
 
-                    String newAttachmentName = input.nextLine();
-                    Connection conn = Server.getConnection();
-                    try {
-                        Statement statement = conn.createStatement();
-                        String insertStatement = "INSERT INTO Email (usernameTo, usernameFrom, emailSubject,message, attachmentFile, attachment)" +
-                                "VALUES (" + "'" + to + "'" + "," + "'" +username +"'" + "," + "'"+emailSubject + "'" + "," + "'" + message + "'" + "," + "'" + byteAttachment + "'"
-                                + ", " + "'" + newAttachmentName + "'" + ")";
-                        System.out.println(insertStatement);
-                        statement.executeUpdate(insertStatement);
+//                    String newAttachmentName = input.nextLine();
+//                    Connection conn = Server.getConnection();
+//                    try {
+//                        Statement statement = conn.createStatement();
+//                        String insertStatement = "INSERT INTO Email (usernameTo, usernameFrom, emailSubject,message, attachmentFile, attachment)" +
+//                                "VALUES (" + "'" + to + "'" + "," + "'" +username +"'" + "," + "'"+emailSubject + "'" + "," + "'" + message + "'" + "," + "'" + byteAttachment + "'"
+//                                + ", " + "'" + newAttachmentName + "'" + ")";
+//                        System.out.println(insertStatement);
+//                        statement.executeUpdate(insertStatement);
+//
+//                    } catch (SQLException e) {
+//                        e.printStackTrace();
+//                    }
 
-                    } catch (SQLException e) {
-                        e.printStackTrace();
+
+
+
+                    String newAttachmentName = input.nextLine();
+                                        Connection conn = Server.getConnection();
+
+                    //Insert into email table withhout the attachment
+                    PreparedStatement stmt = null;
+                    try {
+                        stmt = conn.prepareStatement("INSERT INTO Email (usernameTo, usernameFrom, emailSubject,message, attachmentFile, attachment) VALUES (?,?, ?, ?, ?, ?)");
+
+                        stmt.setString(1, to);
+                        stmt.setString(2, username);
+                        stmt.setString(4, emailSubject);
+                        stmt.setString(3, message);
+                        stmt.setBytes(5, byteAttachment);
+                        stmt.setString(6, newAttachmentName);
+                        stmt.execute();
                     }
+                    catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                    // String insert = "INSERT INTO email(usersIDFrom, usersIDTo, Message, Subject, Attachment, AttachmentName) VALUES"
+                    // + "( " + ClientID  + " , " + recipientID  + " , " + "'" + message + "'" +  " , " +  "'" + subject + "'" + " , "  + "'" + byteArray + "'" +  " , " + "'" + AttachmentNameModified + "'" + ")";
+//                    System.out.println("byte array size inside server: " + byteArray.length );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

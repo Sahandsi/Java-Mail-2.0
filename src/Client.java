@@ -118,39 +118,40 @@ public class Client extends Application     // For GUI
 
     private static Connection getConnection()                      // All the settings for the SQL connection
     {
-//        try
-//        {
-//            String driver = "com.mysql.jdbc.Driver";
-//            String url = "jdbc:mysql://homepages.shu.ac.uk:3306/b5038121_db2";
-//            String username = "b5038121";
-//            String password = "Sami1369";
-//            Class.forName(driver);
-//            Connection conn = DriverManager.getConnection(url, username, password);
-//            System.out.println("Connected");
-//            return conn;
-//
-//        }
-//        catch(Exception e)
-//        {
-//            System.out.println(e);
-//        }
-//        return null;
-        
-        Connection connection = null;
         try
         {
-            connection = DriverManager.getConnection(
-                "jdbc:mysql://homepages.shu.ac.uk:3306/b5038121_db2",
-                                                    "b5038121","Sami1369");
+            String driver = "com.mysql.jdbc.Driver";
+            String url = "jdbc:mysql://localhost:8889/Java";
+            String username = "root";
+            String password = "root";
+           // Connection conn = null;
+            Class.forName(driver);
+            Connection conn = DriverManager.getConnection(url, username, password);
+            System.out.println("Connected");
+            return conn;
 
         }
-        catch(SQLException sqlEx)
+        catch(Exception e)
         {
-            System.out.println(
-                        "* Cannot connect to database! *");
-            System.exit(1);
+            System.out.println(e);
         }
-        return connection;
+        return null;
+
+//        Connection connection = null;
+//        try
+//        {
+//            connection = DriverManager.getConnection(
+//                "jdbc:mysql://homepages.shu.ac.uk:3306/b5038121_db2",
+//                                                    "b5038121","Sami1369");
+//
+//        }
+//        catch(SQLException sqlEx)
+//        {
+//            System.out.println(
+//                        "* Cannot connect to database! *");
+//            System.exit(1);
+//        }
+//        return connection;
     }
 
     private void registerUser(String username, Label message)      // For registering the user to the SQL
@@ -274,8 +275,8 @@ public class Client extends Application     // For GUI
         Button buttonCompose = new Button("Compose");
         buttonCompose.setPrefSize(100, 20);
         buttonCompose.setOnAction(e -> sendMail());
-        
-  
+
+
 
         Button buttonReply = new Button("Reply");
         buttonReply.setPrefSize(100, 20);
@@ -348,17 +349,20 @@ public class Client extends Application     // For GUI
         Email email = inboxTable.getSelectionModel().getSelectedItem();
         seeEmail(email,inboxTable);
     }
-    
-    
+
+
     private void downloadMail(Email mail, Stage stage)
     {
-        
+
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
         fileChooser.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter(mail.getExtension() + "File",  "*." + mail.getExtension()));
         System.out.println(mail.getExtension());
         File file = fileChooser.showSaveDialog(stage);
+
+
+
         if(file != null) // prevenet null pointer exception
         {
             FileOutputStream outFile;
@@ -368,6 +372,8 @@ public class Client extends Application     // For GUI
                 try
                 {
                     outFile.write(mail.getAttachmentFiles());
+
+
                 }
                 catch (IOException e1)
                 {
@@ -390,7 +396,7 @@ public class Client extends Application     // For GUI
                 e.printStackTrace();
             }
         }
-        
+
     }
 
     private void reply(Email emailToReply)
@@ -507,7 +513,7 @@ public class Client extends Application     // For GUI
 
         Button buttonClose = new Button("Close");
         buttonClose.setPrefSize(100, 20);
-        
+
         Button buttonDowload = new Button("Download");
         buttonDowload.setPrefSize(100, 20);
         buttonDowload.setOnAction(e -> downloadMail(seeEmail, stage));
@@ -606,7 +612,7 @@ public class Client extends Application     // For GUI
 
         String filename = attachmentname.getText();
 
-      
+
 
 
 
@@ -640,14 +646,14 @@ public class Client extends Application     // For GUI
                         objectOutput.writeObject(byteArray);
                         objectOutput.flush(); // flush the stream
                         System.out.println(byteArray);
-                        
-                        
-                        
+
+
+
                         // create another with number -1 at the end
                         String newAttachmentName = filename.substring(0, filename.indexOf('.')); // before the extension .
                         newAttachmentName = newAttachmentName  + "-1" + "." + filename.substring(filename.indexOf('.') + 1); // -1.extensionNaem
                         System.out.println(newAttachmentName);
-                        
+
                         FileOutputStream outFile = new FileOutputStream(newAttachmentName);
                         outFile.write(byteArray);
                         outFile.close();
@@ -695,10 +701,12 @@ public class Client extends Application     // For GUI
 
         String attachmentname = inboxTable.getSelectionModel().getSelectedItem().getAttachment();
 
+//        System.out.println("hi my name is"+attachmentname);
+
         String extension = "";
 
         extension = attachmentname.substring(attachmentname.lastIndexOf('.') + 1);
-      
+
         if (extension.equals("mp3"))
         {
             playMedia(attachmentname);
@@ -842,6 +850,9 @@ public class Client extends Application     // For GUI
         file = new File(attachmentname);
         sound = new Media(file.toURI().toString());
 
+
+        System.out.println("hi my name is media"+sound);
+
         double MIN_CHANGE = 0.5 ;
 
                 player = new MediaPlayer(sound);
@@ -943,6 +954,7 @@ public class Client extends Application     // For GUI
         try {
 
 
+
             Scanner input = new Scanner(attachmentname);
             File file = new File(input.nextLine());
             input = new Scanner(file);
@@ -951,10 +963,21 @@ public class Client extends Application     // For GUI
             while (input.hasNextLine())
             {
                 String line = input.nextLine();
-                System.out.println(line);
+               // System.out.println(line);
                 textArea.appendText("\n" + input.nextLine());
 
-            }
+
+
+//////////////////////saving the textfile
+//                PrintWriter out = new PrintWriter("Text-Attachment.txt");
+//                out.println(line);
+//                out.close();
+///////////////////////////////////////////////////
+
+
+
+
+        }
             input.close();
 
         }
@@ -962,6 +985,8 @@ public class Client extends Application     // For GUI
         {
             ex.printStackTrace();
         }
+
+
 
 
         border.setTop(hbox);
